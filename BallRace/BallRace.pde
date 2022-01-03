@@ -1,14 +1,14 @@
 int trackWidth = 500;
 int laneHeight = 50;
 int noOfLanes = 4;
-int time;
+int startTime;
 Track track;
 
 void setup(){
   size(1500,800);
   track = new Track(noOfLanes,trackWidth, laneHeight, (width-trackWidth)/2);
   noStroke();
-  time = millis();
+  startTime = millis();
 }
 
 void draw() {
@@ -21,5 +21,7 @@ void keyPressed() {
     track.moveCircle(-1);
   } else if (key == 'd') {
     track.moveCircle(1);
+  } else if(key == 'q') {
+    frameRate(2);
   }
 }

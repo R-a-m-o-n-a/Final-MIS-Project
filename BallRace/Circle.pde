@@ -18,9 +18,9 @@ public class Circle {
     this.laneHeight = laneHeight;
   }
 
-  public boolean move(int dir) {// returns whether ball is on gravel
+  public boolean move(int dir, boolean wouldCauseCollision) {// returns whether ball is on gravel
     boolean ballWasOnGravel = lane==0 || lane == noOfLanes-1;
-    if (lane + dir >= 0 && lane + dir < noOfLanes) {
+    if (lane + dir >= 0 && lane + dir < noOfLanes && !wouldCauseCollision) {
       
       if(ballWasOnGravel) {
         offsetRecoveryRate = GRAVEL_OFFSET_RECOVERY_RATE;

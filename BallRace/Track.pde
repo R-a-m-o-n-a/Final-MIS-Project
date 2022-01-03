@@ -4,12 +4,12 @@ int NO_OF_WALLS = 250;
 int PERCENTAGE_OF_BIG_WALLS = 20;
 int TRACK_LENGTH = 1000;
 int CIRCLE_SPACING = 4;
-int CIRCLE_OFFSET = CIRCLE_SPACING + laneHeight/2;
-color gravelColor = color(53,51,50);
-color trackColor1 = color(20,65,120);
-color trackColor2 = color(0,55,104);
-color wallColor = color(240,80,50);
-color bigWallColor = color(240,20,50);
+int COLLISION_TIMEOUT = 2000; 
+color GRAVEL_COLOR = color(53,51,50);
+color TRACK_COLOR_A = color(20,65,120);
+color TRACK_COLOR_B = color(0,55,104);
+color WALL_COLOR = color(240,80,50);
+color BIG_WALL_COLOR = color(240,20,50);
 
 public class Track {
 
@@ -25,6 +25,7 @@ public class Track {
   int maxShownLanes = height / laneHeight + 2;
   int circleTop;
   int speed = 1;
+  WallCollision collision = null;
 
   public Track(int givenNoOfLanes, int givenTrackWidth, int givenLaneHeight, int leftX) {
     trackWidth = givenTrackWidth;
@@ -40,13 +41,13 @@ public class Track {
   }
 
   public void drive(int steps) {
-    if (isColliding()) {
-      
-    } else {
+    if (isColliding() && collision == null) {
+      collision = new WallCollision(position+1, COLLISION_TIMEOUT);
+    } else if (collision == null) {
       pixelPosition += steps;
       if (pixelPosition < 0) pixelPosition = 0;
-      position = (pixelPosition-CIRCLE_OFFSET) / laneHeight+2;
-      println(pixelPosition + " " + position);
+      
+      position = (pixelPosition- (CIRCLE_SPACING + laneHeight/2)) / laneHeight + 2; // pixelPosition - (CIRCLE_SPACING + laneHeight/2) aligns top of circle with row change.
     }
   }
   
@@ -56,6 +57,14 @@ public class Track {
 
   public void draw() {
     drive(speed);
+    if(collision != null) {
+      println(collision.getTimeoutPercentage());
+      if(collision.isOver()) {
+        println(collision.getTrackField());
+        removeWall(collision.getTrackField());
+        collision = null;
+      }
+    }
   
     for (int i = position-2; i < position-2 + maxShownLanes || i < TRACK_LENGTH; i++) {
       for (int lane = 0; lane < noOfLanes; lane++) {
@@ -93,22 +102,38 @@ public class Track {
 
   public color getFillColor(int row, int lane) {
     color fillColor;
+    color wallColor;
+    color trackColor;
     if (lane == 0 || lane == noOfLanes - 1) {
-      fillColor = gravelColor;
+      trackColor = GRAVEL_COLOR;
     } else {
       if (row % 2 == 0) {
-        fillColor = trackColor1;
+        trackColor = TRACK_COLOR_A;
       } else {
-        fillColor = trackColor2;
+        trackColor = TRACK_COLOR_B;
       }
     }
+    fillColor = trackColor;
+    wallColor = trackColor;
     if (track[row][lane] == 1) {
-      fillColor = wallColor;
+      wallColor = WALL_COLOR;
+      fillColor = WALL_COLOR;
     }
     if (track[row][lane] == 2) {
-      fillColor = bigWallColor;
+      wallColor = BIG_WALL_COLOR;
+      fillColor = BIG_WALL_COLOR;
+    }
+    if(collision != null && row == collision.getTrackField()) {
+      fillColor =  lerpColor(wallColor, trackColor, collision.getTimeoutPercentage());
     }
     return fillColor;
+  }
+  
+  public void removeWall(int trackField) {
+    for (int lane = 0; lane < noOfLanes; lane++) {
+      print(track[trackField][lane]);
+      track[trackField][lane] = 0;
+    }
   }
 
   public boolean randomNumberOk(int r) { // there is no wall in this line or the one before or after
@@ -132,6 +157,18 @@ public class Track {
   }
 
   public void moveCircle(int dir) {
-    boolean isBallOnGravel = circle.move(dir);
+    if(collision == null) {
+      boolean isBallOnGravel = circle.move(dir, movingWouldCauseCollision(dir));
+    }
+  }
+  
+  private boolean movingWouldCauseCollision(int dir) {
+    int newLane = circle.getLane() + dir;
+    if(newLane < 0 || newLane >= noOfLanes) return true;
+    
+    /* the circle is tracked on its top. So the first parameter only checks whether the top of the ball is next to a wall
+     * therefore we need the second double boolean to check whether in the row under the top of the ball is a wall and the tail of the ball is still next to it.
+     * Don't touch it. Took me hours to figure out how to do it right */
+    return track[position+1][newLane] != 0 || (track[position][newLane] != 0 && !((position - 1) * laneHeight + (laneHeight/2 - CIRCLE_SPACING*2) <= pixelPosition));
   }
 }
