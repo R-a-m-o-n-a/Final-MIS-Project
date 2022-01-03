@@ -24,6 +24,7 @@ public class Track {
   int laneWidth = trackWidth / noOfLanes;
   int maxShownLanes = height / laneHeight + 2;
   int circleTop;
+  int speed = 1;
 
   public Track(int givenNoOfLanes, int givenTrackWidth, int givenLaneHeight, int leftX) {
     trackWidth = givenTrackWidth;
@@ -54,6 +55,8 @@ public class Track {
   }
 
   public void draw() {
+    drive(speed);
+  
     for (int i = position-2; i < position-2 + maxShownLanes || i < TRACK_LENGTH; i++) {
       for (int lane = 0; lane < noOfLanes; lane++) {
         fill(getFillColor(i, lane));
