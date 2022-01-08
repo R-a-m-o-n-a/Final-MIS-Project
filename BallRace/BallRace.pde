@@ -1,3 +1,13 @@
+import controlP5.*; 
+import oscP5.*;
+import netP5.*;
+
+OscP5 oscP5;
+NetAddress PD_Location;
+String PD_IP = "127.0.0.1";
+int LISTENING_PORT = 32000;
+int SENDING_PORT = 12000;
+
 int trackWidth = 500;
 int laneHeight = 50;
 int noOfLanes = 4;
@@ -6,9 +16,21 @@ Track track;
 
 void setup(){
   size(1500,800);
+  frameRate(30);
+  
+  oscP5 = new OscP5(this, LISTENING_PORT); /* start oscP5, listening for incoming messages at specified port */
+  PD_Location = new NetAddress(PD_IP, SENDING_PORT); // set up connection to PD for sending OSC messages
+
+  // set the OSC messages that Processing needs to listen to: plug(this, nameOfMethod, scope)
+  oscP5.plug(this,"receiveChangeLane","/changeLane");   
+  oscP5.plug(this,"receiveJump","/jump");   
+  
+  
   track = new Track(noOfLanes,trackWidth, laneHeight, (width-trackWidth)/2);
-  noStroke();
+  noStroke(); // don't draw border on shapes
   startTime = millis();
+  
+  
 }
 
 void draw() {
@@ -24,4 +46,35 @@ void keyPressed() {
   } else if(key == 'q') {
     frameRate(2);
   }
+}
+
+/** Send OSC Messages to PD.
+ * Implemented Messages are
+ * /frameRateChanged - sends new frameRate
+ * /laneChanged - sends new lane
+ * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
+ * /wallDistance - sends each middle lane and the amount of pixels until a wall is hit on that lane - outsourced to another method because has two params
+ */
+void sendOscMessage(String scope, int value) {
+  OscMessage message = new OscMessage(scope);
+  message.add(value);
+  oscP5.send(message, PD_Location); /* send the message */
+}
+
+void sendOscMessageForWallDistance(int lane, int distance) {
+  OscMessage message = new OscMessage("/wallDistance");
+  message.add(lane);
+  message.add(distance);
+  oscP5.send(message, PD_Location); /* send the message */
+}
+
+
+void receiveChangeLane(int dir) {
+  println("received OSC message '/changeLane' with dir " + dir);
+  track.moveCircle(dir);   
+}
+
+void receiveJump() {
+  println("received OSC message '/jump'");
+  //track.jumpCircle();   method does not exist yet 
 }

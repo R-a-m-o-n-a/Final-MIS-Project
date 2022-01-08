@@ -42,12 +42,15 @@ public class Track {
 
   public void drive(int steps) {
     if (isColliding() && collision == null) {
+      sendOscMessage("/hitWall", COLLISION_TIMEOUT); // tell PD that we bumped into a wall and how long we are going to be freezed (in ms)
       collision = new WallCollision(position+1, COLLISION_TIMEOUT);
-    } else if (collision == null) {
+    } else if (collision == null) { // only move forward if no collision is currently freezing the ball
       pixelPosition += steps;
-      if (pixelPosition < 0) pixelPosition = 0;
+      if (pixelPosition < 0) pixelPosition = 0; // might be obsolete
       
-      position = (pixelPosition- (CIRCLE_SPACING + laneHeight/2)) / laneHeight + 2; // pixelPosition - (CIRCLE_SPACING + laneHeight/2) aligns top of circle with row change.
+      position = (pixelPosition - (CIRCLE_SPACING + laneHeight/2)) / laneHeight + 2; // pixelPosition - (CIRCLE_SPACING + laneHeight/2) aligns top of circle with row change.
+      
+      calculateWallDistance(); // to create sound of wall approaching
     }
   }
   
@@ -58,9 +61,9 @@ public class Track {
   public void draw() {
     drive(speed);
     if(collision != null) {
-      println(collision.getTimeoutPercentage());
+      //println(collision.getTimeoutPercentage());
       if(collision.isOver()) {
-        println(collision.getTrackField());
+        //println(collision.getTrackField());
         removeWall(collision.getTrackField());
         collision = null;
       }
@@ -170,5 +173,24 @@ public class Track {
      * therefore we need the second double boolean to check whether in the row under the top of the ball is a wall and the tail of the ball is still next to it.
      * Don't touch it. Took me hours to figure out how to do it right */
     return track[position+1][newLane] != 0 || (track[position][newLane] != 0 && !((position - 1) * laneHeight + (laneHeight/2 - CIRCLE_SPACING*2) <= pixelPosition));
+  }
+  
+  private void calculateWallDistance() {
+    for(int lane = 1; lane < noOfLanes - 1; lane++) { // only for middle lanes
+    
+      // find the next wall
+      int positionOfNextWall = position+1;
+      while(track[positionOfNextWall][lane] == 0) positionOfNextWall++;
+      
+      // calculate the distance
+      int pixelPositionOfNextWall = (positionOfNextWall - 2) * laneHeight;
+      int distance = pixelPositionOfNextWall - pixelPosition;
+      
+      boolean onWall = track[position+1][lane] != 0 || (track[position][lane] != 0 && !((position - 1) * laneHeight + (laneHeight/2 - CIRCLE_SPACING*2) <= pixelPosition));
+      
+      //println(onWall ? ("Wall on lane " + lane + " is HERE!") : ("Wall on lane " + lane + " is " + distance + " pixels away."));
+      
+      sendOscMessageForWallDistance(lane, onWall ? 0 : distance);
+    }
   }
 }

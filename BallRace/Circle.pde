@@ -29,6 +29,7 @@ public class Circle {
       }
       
       lane += dir;
+      sendOscMessage("/laneChanged", lane);
       changingLaneOffset = laneWidth * dir * (-1);
     }
     boolean isBallOnGravel =  lane == 0 || lane == noOfLanes - 1;
@@ -49,6 +50,7 @@ public class Circle {
     if(frameRateResetTimeout && abs(changingLaneOffset) < laneWidth/2) { // when back on normal track change back to normal speed
       if(frameRate < 60) {
         frameRate(frameRate++);
+        sendOscMessage("/frameRateChanged", (int) frameRate); // tell PD the frameRate changed so that the speed of the ball can be represented in the sound
       } else {
         frameRateResetTimeout = false;
       }
