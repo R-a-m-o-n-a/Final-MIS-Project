@@ -53,7 +53,7 @@ void keyPressed() {
  * /frameRateChanged - sends new frameRate
  * /laneChanged - sends new lane
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
- * /wallDistance - sends each middle lane and the amount of pixels until a wall is hit on that lane - outsourced to another method because has two params
+ * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
  */
 void sendOscMessage(String scope, int value) {
   OscMessage message = new OscMessage(scope);
@@ -61,18 +61,12 @@ void sendOscMessage(String scope, int value) {
   oscP5.send(message, PD_Location); /* send the message */
 }
 
-void sendOscMessageForWallDistance(int lane, int distance) {
-  OscMessage message = new OscMessage("/wallDistance");
-  message.add(lane);
-  message.add(distance);
-  oscP5.send(message, PD_Location); /* send the message */
-}
-
-
+// method to handle the change lane when the OSC message /changeLane is received
 void receiveChangeLane(int dir) {
   println("received OSC message '/changeLane' with dir " + dir);
   track.moveCircle(dir);   
 }
+
 
 void receiveJump() {
   println("received OSC message '/jump'");

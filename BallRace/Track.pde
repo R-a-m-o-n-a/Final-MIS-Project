@@ -189,8 +189,9 @@ public class Track {
       boolean onWall = track[position+1][lane] != 0 || (track[position][lane] != 0 && !((position - 1) * laneHeight + (laneHeight/2 - CIRCLE_SPACING*2) <= pixelPosition));
       
       //println(onWall ? ("Wall on lane " + lane + " is HERE!") : ("Wall on lane " + lane + " is " + distance + " pixels away."));
+      if(onWall) distance = 0;
       
-      sendOscMessageForWallDistance(lane, onWall ? 0 : distance);
+      sendOscMessage("/wallDistanceLane"+lane, distance);
     }
   }
 }
