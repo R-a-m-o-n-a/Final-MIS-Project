@@ -6,12 +6,13 @@ uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; //how often to read data from the boar
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
 
+const float THRESHOLD = 20; // threshold for move detection (when user bends left/right)
+
 // variables for 1st alternative of move detection (detection of the real peak of the movement)
 float prevAngle = 0;
 boolean thresholdExceeded = false;
 boolean dataGoingUp = false;
 boolean dataGoingDown = false;
-const float THRESHOLD = 20;
 
 // variables for 2nd alternative (register peak as soon as data exceeds threshold)
 boolean minRegistered = false;
