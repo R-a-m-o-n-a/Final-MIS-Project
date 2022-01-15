@@ -25,7 +25,7 @@ void setup(){
 
   // set the OSC messages that Processing needs to listen to. Syntax: plug(this, nameOfMethod, scope)
   oscP5.plug(this,"receiveChangeLane","/changeLane");   
-  oscP5.plug(this,"receiveJump","/jump");   
+  oscP5.plug(this,"receiveClap","/clap");   
     
   track = new Track();
   noStroke(); // don't draw border on shapes
@@ -70,8 +70,8 @@ void receiveChangeLane(int dir) {
   track.moveCircle(dir);   
 }
 
-// method to handle the jump function to avoid big walls, called when OSC message /jump is received
-void receiveJump() {
-  println("received OSC message '/jump'");
-  //track.makeRedWallsPervious();   method does not exist yet 
+// method to handle the clap function to avoid big walls, called when OSC message /clap is received
+void receiveClap() {
+  println("received OSC message '/clap'");
+  track.makeRedWallsPervious(); 
 }
