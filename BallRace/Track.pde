@@ -5,13 +5,13 @@ int TRACK_LENGTH = 1000; // how many rows in the track array
 int TRACK_WIDTH = 500; // how many pixels the whole track is wide
 int ROW_HEIGHT = 50; // how many pixels each row is high
 int NO_OF_LANES = 4;
+int CIRCLE_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
 // wall parameters
-int NO_OF_WALLS = 250;
+int NO_OF_WALLS = 170;
 int PERCENTAGE_OF_BIG_WALLS = 20;
-int CIRCLE_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
-int PERVIOUS_WALLS_TIME = 2000;  // how long the ball cannot move after hitting a wall (in ms)
+int PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS = ceil(ROW_HEIGHT * 2.5);  // the walls are pervious for an amount of pixels moved, that way the difficulty stays the same if we change the speed
 
 // colors
 color GRAVEL_COLOR = color(53,51,50);
@@ -29,10 +29,10 @@ public class Track {
   int maxShownLanes; // the maximum amount of lanes that could be visible on screen so that the others can be disregarded when drawing the track to save calculation power
   int position = 0; // the field of the track the ball is currently on, gets calculated based on the pixelPosition
   int pixelPosition = 0; // a value that counts up pixel by pixel when the track starts moving
-  int speed = 1; // amount of pixels that we move each frame
+  int speed = 3; // amount of pixels that we move each frame
   WallCollision collision = null; // variable that will be filled once we hit a wall
   boolean redWallsArePervious = false; // if the user claps, the red walls will become pervious for a specified amount of milliseconds, during this time this variable is true
-  int clapTime; // will hold the start time of when the red walls became pervious
+  int perviousWallsStartPixelPosition; // will hold the start position of when the red walls became pervious
 
   // constructor: creates the circle and sets some important variables. Also fills track with walls
   public Track() {
@@ -77,7 +77,7 @@ public class Track {
       }
     }
     
-    if(redWallsArePervious && clapTime + PERVIOUS_WALLS_TIME <= millis() - startTime) { // make red walls solid again after the time is over
+    if(redWallsArePervious && perviousWallsStartPixelPosition + PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS <= pixelPosition) { // make red walls solid again after moved specified amount of pixels
        redWallsArePervious = false;
     }
   
@@ -232,7 +232,7 @@ public class Track {
   public void makeRedWallsPervious() {
     // we only start the pervious walls timeout if it is not currently running because otherwise the player could keep the mode on endlessly
     if(!redWallsArePervious) {
-      this.clapTime = millis() - startTime;
+      this.perviousWallsStartPixelPosition = pixelPosition;
       redWallsArePervious = true;
     }
   }
