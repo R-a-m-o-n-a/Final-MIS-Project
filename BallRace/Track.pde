@@ -46,7 +46,6 @@ public class Track {
   // move the whole track down so that the ball is "driving" without actually changing y position
   public void drive(int pixelsToMove) {
     if (isColliding() && collision == null) { // new collision detected → do not move forward
-    println("new collision detected");
       sendOscMessage("/hitWall", COLLISION_TIMEOUT); // tell PD that we bumped into a wall and how long we are going to be unable to move (in ms)
       collision = new WallCollision(position+1, COLLISION_TIMEOUT); // create a new WallCollision object for the current collision
     } else if (collision == null) { // only move forward if no collision is currently freezing the ball
