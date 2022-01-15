@@ -2,8 +2,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 // track constants
 int TRACK_LENGTH = 1000; // how many rows in the track array
-int TRACK_WIDTH = 500; // how many pixels the whole track is wide
-int ROW_HEIGHT = 50; // how many pixels each row is high
+int TRACK_WIDTH = 600; // how many pixels the whole track is wide
+int ROW_HEIGHT = 80; // how many pixels each row is high
 int NO_OF_LANES = 4;
 int CIRCLE_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
@@ -169,12 +169,14 @@ public class Track {
     }
   }
 
-  public boolean randomNumberOk(int r) { // there is no wall in this line or the two lines before or after → ensures that the player is able to change lanes in order to avoid normal walls
+  public boolean randomNumberOk(int r) { // there is no wall in this line or the three lines before or after → ensures that the player is able to change lanes in order to avoid normal walls
     return (track[r][1] == 0 && track[r][2] == 0)
             && (track[r + 1][1] == 0 && track[r + 1][2] == 0)
             && (track[r - 1][1] == 0 && track[r - 1][2] == 0)
             && (track[r + 2][1] == 0 && track[r + 2][2] == 0)
-            && (track[r - 2][1] == 0 && track[r - 2][2] == 0);
+            && (track[r - 2][1] == 0 && track[r - 2][2] == 0)
+            && (track[r + 3][1] == 0 && track[r + 3][2] == 0)
+            && (track[r - 3][1] == 0 && track[r - 3][2] == 0);
   }
 
   public int generateRandomNumber(int min, int max) {
@@ -186,7 +188,7 @@ public class Track {
   }
 
   public int generateRandomRowNumber() {
-    return generateRandomNumber(7, TRACK_LENGTH-3);
+    return generateRandomNumber(7, TRACK_LENGTH-5);
   }
 
   public void moveCircle(int dir) { // tries to change lane, if not allowed will not change
