@@ -213,4 +213,8 @@ public class Track {
      * Don't touch it. Took me hours to figure out how to do it right */
     return track[position+1][lane] != 0 || (track[position][lane] != 0 && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - CIRCLE_SPACING*2) <= pixelPosition));
   }
+  
+  public void makeRedWallsPervious() {
+    // this should make the walls pervious for a second or so
+  }
 }

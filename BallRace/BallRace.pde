@@ -46,6 +46,8 @@ void keyPressed() {
     track.moveCircle(1);
   } else if(key == 'q') { // to examine specific behaviours
     frameRate(2);
+  } else if(key == 'f') { // to examine specific behaviours
+    track.makeRedWallsPervious();
   }
 }
 
@@ -71,5 +73,5 @@ void receiveChangeLane(int dir) {
 // method to handle the jump function to avoid big walls, called when OSC message /jump is received
 void receiveJump() {
   println("received OSC message '/jump'");
-  //track.jumpCircle();   method does not exist yet 
+  //track.makeRedWallsPervious();   method does not exist yet 
 }
