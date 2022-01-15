@@ -65,13 +65,12 @@ public class Track {
   public void draw() {
     
     if(position >= TRACK_LENGTH-3) { // reached end of track
-      frameRate(frameRate*0.7);
-    } if(position >= TRACK_LENGTH-2) {
+      frameRate(frameRate*0.7); // slow game down exponentially
+    } if(position >= TRACK_LENGTH-2) { // stop game
       println("END");
       stop();
     }
    
-    
     drive(speed); // move the track
     
     if(collision != null) { // if there is still a collision
@@ -84,8 +83,16 @@ public class Track {
       }
     }
     
+    if(redWallsArePervious) {
+      float factor = abs((perviousWallsStartPixelPosition - pixelPosition) /(float)( PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS)); // get percentage of how many pixels have passed
+      if(factor>0.5) factor = 1 - factor; // map values from 0→1 to 0→0.5→0
+      factor*=1.5; // here we can control how big the maximum factor (maximum size of ball) should be
+      factor += 1; // add 1 for 1→1.5→1
+      circle.setBallSize(factor);
+    }
     if(redWallsArePervious && perviousWallsStartPixelPosition + PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS <= pixelPosition) { // make red walls solid again after moved specified amount of pixels
        redWallsArePervious = false;
+       circle.setBallSize(1);
     }
   
     // draw the actual track

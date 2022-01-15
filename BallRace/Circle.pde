@@ -10,6 +10,7 @@ public class Circle {
   int laneHeight;
   int noOfLanes;
   int ballSize; // diameter of the ball
+  int originalBallSize; // diameter of the ball - keep in case we change the ball size (for jumping for example)
   int changingLaneOffset; // this value regulates gradually chaging lanes, it is added to the xPos in draw and adjusted so that it becomes 0 again after the change is finished
   float offsetRecoveryRate;// determines how fast the changingLaneOffset shrinks. Differs if ball has been on gravel or not
   boolean frameRateResetTimeout = false;
@@ -18,6 +19,7 @@ public class Circle {
   public Circle(int noOfLanes, int trackWidth, int laneHeight, int circleSpacing) {
     laneWidth = trackWidth / noOfLanes;
     ballSize = laneHeight - circleSpacing * 2;
+    originalBallSize = ballSize;
     this.noOfLanes = noOfLanes;
     this.laneHeight = laneHeight;
   }
@@ -80,5 +82,9 @@ public class Circle {
 
   public int getTopY() { // return the top-most y coordinate of the ball
     return height - laneHeight - ballSize;
+  }
+  
+  public void setBallSize(float factor) {
+    ballSize = round(originalBallSize * factor);
   }
 }
