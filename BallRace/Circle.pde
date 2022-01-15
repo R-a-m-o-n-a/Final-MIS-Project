@@ -9,7 +9,7 @@ public class Circle {
   int laneWidth;
   int laneHeight;
   int noOfLanes;
-  int ballSize;
+  int ballSize; // diameter of the ball
   int changingLaneOffset; // this value regulates gradually chaging lanes, it is added to the xPos in draw and adjusted so that it becomes 0 again after the change is finished
   float offsetRecoveryRate;// determines how fast the changingLaneOffset shrinks. Differs if ball has been on gravel or not
   boolean frameRateResetTimeout = false;

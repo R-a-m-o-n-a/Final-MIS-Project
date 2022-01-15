@@ -36,7 +36,7 @@ public class Track {
 
   // constructor: creates the circle and sets some important variables. Also fills track with walls
   public Track() {
-    maxShownLanes = height / ROW_HEIGHT + 2; // add 2 more lanes just to be safe
+    maxShownLanes = height / ROW_HEIGHT + 3; // add 3 more lanes just to be safe (for lanes going in and out)
     leftBorderX = ((width-TRACK_WIDTH)/2);
     circle = new Circle(NO_OF_LANES, TRACK_WIDTH, ROW_HEIGHT, CIRCLE_SPACING);
     circleTop = circle.getTopY();
@@ -57,13 +57,21 @@ public class Track {
        * we then divide all pixels that we have driven so far by the height of the row
        * we need to add two because the circle start position is already on the track and not before the track */
       position = (pixelPosition - (CIRCLE_SPACING + ROW_HEIGHT/2)) / ROW_HEIGHT + 2; 
-      
       calculateWallDistance(); // to create sound of wall approaching
     }
   }
 
   // loop that draws and drives the game
   public void draw() {
+    
+    if(position >= TRACK_LENGTH-3) { // reached end of track
+      frameRate(frameRate*0.7);
+    } if(position >= TRACK_LENGTH-2) {
+      println("END");
+      stop();
+    }
+   
+    
     drive(speed); // move the track
     
     if(collision != null) { // if there is still a collision
@@ -81,11 +89,15 @@ public class Track {
     }
   
     // draw the actual track
-    for (int row = position-2; row < position-2 + maxShownLanes || row < TRACK_LENGTH; row++) { // iterates over all rows that are currently visible on screen
-      for (int lane = 0; lane < NO_OF_LANES; lane++) { // iterates over all lanes
-        fill(getFillColor(row, lane)); // gets the color in which to draw the current
-        // the first two rectangle parameters are the coordinates of the upper left corner, then width, then height
-        rect(leftBorderX + laneWidth * lane, height + pixelPosition - row * ROW_HEIGHT, laneWidth, ROW_HEIGHT);
+    for (int row = position-2; row < position-2 + maxShownLanes && row < TRACK_LENGTH; row++) { // iterates over all rows that are currently visible on screen
+      if(row == TRACK_LENGTH - 3) {
+        drawFinishLine();
+      } else {
+        for (int lane = 0; lane < NO_OF_LANES; lane++) { // iterates over all lanes
+          fill(getFillColor(row, lane)); // gets the color in which to draw the current
+          // the first two rectangle parameters are the coordinates of the upper left corner, then width, then height
+          rect(leftBorderX + laneWidth * lane, height + pixelPosition - row * ROW_HEIGHT, laneWidth, ROW_HEIGHT);
+        }
       }
     }
 
@@ -188,7 +200,7 @@ public class Track {
   }
 
   public int generateRandomRowNumber() {
-    return generateRandomNumber(7, TRACK_LENGTH-5);
+    return generateRandomNumber(7, TRACK_LENGTH-6);
   }
 
   public void moveCircle(int dir) { // tries to change lane, if not allowed will not change
@@ -210,8 +222,16 @@ public class Track {
     for(int lane = 1; lane < NO_OF_LANES - 1; lane++) { // only for middle lanes
     
       // find the next wall
-      int positionOfNextWall = position+1;
-      while(track[positionOfNextWall][lane] == 0) positionOfNextWall++;
+      int positionOfNextWall = position;
+      do {
+        positionOfNextWall++;
+        
+        if(positionOfNextWall >= TRACK_LENGTH) {
+          // no more walls
+          sendOscMessage("/wallDistanceLane"+lane, -1000);
+          return; // leave the function and don't do anything else.
+        }
+      } while(track[positionOfNextWall][lane] == 0);
       
       // calculate the distance
       int pixelPositionOfNextWall = (positionOfNextWall - 2) * ROW_HEIGHT;
@@ -241,5 +261,19 @@ public class Track {
   private boolean fieldIsHardWall(int row, int lane) {
     // field is hard wall if it either has a normal (orange) wall, or a big (red) wall that is not currently pervious
     return track[row][lane] == 1 || (track[row][lane] == 2 && !redWallsArePervious);
+  }
+  
+  private void drawFinishLine() {
+    int checkerSize = 10;
+    boolean black = true;
+    for(int y = 0; y < ROW_HEIGHT; y += checkerSize) {
+      black = y % 20 == 0;
+      for (int x = leftBorderX; x < leftBorderX+TRACK_WIDTH; x += checkerSize) {
+        fill(black ? color(0,0,0) : color(250,250,250));
+        black = !black;
+        // the first two rectangle parameters are the coordinates of the upper left corner, then width, then height
+        rect(x, height + pixelPosition - (TRACK_LENGTH-3) * ROW_HEIGHT + y, checkerSize, checkerSize);
+      }
+    }
   }
 }
