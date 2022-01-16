@@ -9,13 +9,13 @@ String PD_IP = "127.0.0.1";
 int LISTENING_PORT = 32000;
 int SENDING_PORT = 12000;
 
-// constants to set up the game
-
-
 // variables for the game itself
 int startTime;
 Track track;
 boolean isGameRunning = false;
+
+// images to display info text
+PImage infoIcon, speechBubble;
 
 void setup(){
   size(1500, 800);
@@ -27,6 +27,9 @@ void setup(){
   // set the OSC messages that Processing needs to listen to. Syntax: plug(this, nameOfMethod, scope)
   oscP5.plug(this,"receiveChangeLane","/changeLane");   
   oscP5.plug(this,"receiveClap","/clap");   
+  
+  infoIcon = loadImage("info.png");
+  speechBubble = loadImage("speech_bubble.png");
     
   track = new Track();
   noStroke(); // don't draw border on shapes
@@ -36,9 +39,19 @@ void setup(){
 // loop that is repeated all over again
 void draw() {
   background(0, 0, 0); 
-  if(isGameRunning ||frameCount < 5) { 
-    track.draw();
-  } 
+  
+  if(isGameRunning) { 
+    track.drive();
+  } else {
+    image(speechBubble, width-400, height-300, 370, 270);
+    image(infoIcon, width-365, height-270, 60, 60);
+    fill(color(0,0,0));
+    textAlign(RIGHT);
+    textSize(45);
+    textLeading(50);
+    text("press\nspace bar\nto start", width-360, height-270, 250, 250);
+  }
+  track.draw();
 }
 
 // alternative key controls for testing

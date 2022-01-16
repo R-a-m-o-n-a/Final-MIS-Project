@@ -27,7 +27,7 @@ public class Track {
   int leftBorderX; // the pixel value of the left side of the track (the window is bigger than the track)
   int circleTop; // top-most position of the circle
   int maxShownLanes; // the maximum amount of lanes that could be visible on screen so that the others can be disregarded when drawing the track to save calculation power
-  int position = 0; // the field of the track the ball is currently on, gets calculated based on the pixelPosition
+  int position = 2; // the field of the track the ball is currently on, gets calculated based on the pixelPosition
   int pixelPosition = 0; // a value that counts up pixel by pixel when the track starts moving
   int speed = 3; // amount of pixels that we move each frame
   WallCollision collision = null; // variable that will be filled once we hit a wall
