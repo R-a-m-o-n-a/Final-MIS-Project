@@ -13,7 +13,8 @@ public class Ball {
   int originalBallSize; // diameter of the ball - keep in case we change the ball size (for jumping for example)
   int changingLaneOffset; // this value regulates gradually chaging lanes, it is added to the xPos in draw and adjusted so that it becomes 0 again after the change is finished
   float offsetRecoveryRate;// determines how fast the changingLaneOffset shrinks. Differs if ball has been on gravel or not
-  boolean frameRateResetTimeout = false;
+  boolean isSpeedingUp = false;
+  boolean isSlowingDown = false;
 
   // constructor. sets all the important values that are passed over from the track class
   public Ball(int noOfLanes, int trackWidth, int laneHeight, int ballSpacing) {
@@ -27,7 +28,9 @@ public class Ball {
   public boolean move(int dir, boolean wouldCauseCollision) { // returns whether ball is on gravel or not
     boolean ballWasOnGravel = (lane==0 || lane == noOfLanes-1);
     
-    if (lane + dir >= 0 && lane + dir < noOfLanes && !wouldCauseCollision) { // change is allowed
+    /* change is allowed when 
+      ball does not go off track with this change &&  not next to wall  && not already changing lane && not currently jumping       */
+    if (lane + dir >= 0 && lane + dir < noOfLanes && !wouldCauseCollision && changingLaneOffset < 5 && ballSize == originalBallSize) {
       if(ballWasOnGravel) {
         offsetRecoveryRate = GRAVEL_OFFSET_RECOVERY_RATE;
       } else {
@@ -37,17 +40,15 @@ public class Ball {
       lane += dir; // actually change lane
       sendOscMessage("/laneChanged", lane); // notify PD of lane change
       changingLaneOffset = laneWidth * dir * (-1); // start the offset for the gradual lane change
+    } else {
+      sendOscMessage("/changeLaneProhibited", 1);
     }
     
     boolean isBallOnGravel = (lane == 0 || lane == noOfLanes - 1);
-    
-    if(isBallOnGravel) { // slow game down if ball is on gravel
-      frameRate(20);
-    } else if (ballWasOnGravel) {  // start gradually going back to normal game speed if ball is moved away from gravel
-      frameRateResetTimeout = true;
-    } else { // normal speed
-      frameRate(60);
-    }
+
+    isSlowingDown = isBallOnGravel; // slow game down if ball is on gravel
+    isSpeedingUp = !isBallOnGravel && ballWasOnGravel; // start gradually going back to normal game speed if ball is moved away from gravel
+    if(!isBallOnGravel && !ballWasOnGravel) frameRate(60); // normal speed
     
     return isBallOnGravel; // return value might be obsolete
   }
@@ -61,12 +62,22 @@ public class Ball {
      *  → add the offset if ball is currently changing lane */
     int xPos = width / 2 + laneWidth / 2 + balancedLane * laneWidth + changingLaneOffset;
   
-    if(frameRateResetTimeout && abs(changingLaneOffset) < laneWidth/2) { // when back on normal track change back to normal speed
-      if(frameRate < 60) {
-        frameRate(frameRate++);
+    if(isSpeedingUp && abs(changingLaneOffset) < laneWidth/2) { // when back on normal track change back to normal speed
+      if(frameRate < 57) {
+        frameRate(frameRate *= 1.08);
         sendOscMessage("/frameRateChanged", (int) frameRate); // tell PD the frameRate changed so that the speed of the ball can be represented in the sound
       } else {
-        frameRateResetTimeout = false; // speed transition is over, speed back to normal (60fps)
+        frameRate(60);
+        isSpeedingUp = false; // speed transition is over, speed back to normal (60fps)
+      }
+    }
+    
+    if(isSlowingDown && abs(changingLaneOffset) < laneWidth/2) { // slow down when reaching gravel
+      if(frameRate > 25) {
+        frameRate(frameRate + (20 - frameRate) * 0.96);
+        sendOscMessage("/frameRateChanged", (int) frameRate); // tell PD the frameRate changed so that the speed of the ball can be represented in the sound
+      } else {
+        isSlowingDown = false; // speed transition is over, speed back to normal (60fps)
       }
     }
     

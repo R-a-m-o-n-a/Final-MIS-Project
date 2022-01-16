@@ -51,7 +51,7 @@ public class Track {
     } if(position >= TRACK_LENGTH-2) { // stop game
       println("END");
       isGameRunning = false;
-      sendOscMessage("/stopGame", 0); // tell PD that the game has stopped
+      sendOscMessage("/stopGame", 1); // tell PD that the game has stopped
       stop();
     }
     
@@ -117,30 +117,36 @@ public class Track {
    * 2 - big wall that spans over all lanes and can not be avoided by changing lane
    */
   public void fillTrackWithWalls() {
+    IntList wallRows = new IntList();
     for (int w = 0; w < NO_OF_WALLS; w++) { // places one wall after the other until specified number is reached
       int randomRow = generateRandomRowNumber(); // picks a random row
-      while (!randomNumberOk(randomRow)) { // checks if the wall can be placed here (if there are no walls already close). generates new row until the placement can be carried out
+      while (!randomNumberOk(randomRow, wallRows)) { // checks if the wall can be placed here (if there are no walls already close). generates new row until the placement can be carried out
         randomRow = generateRandomRowNumber();
       }
+      // we add the remaining walls to a list because we want to place them on alternating lanes. the easiest way for this is to sort the list and then alternate
+      wallRows.append(randomRow);
+    }
+    wallRows.sort();
+    boolean left = true;
+    for(int i = 0; i < wallRows.size(); i++) { // add normal walls to each previously picked row
+      int row = wallRows.get(i);
+      
+      println(i + " " + row + " " + left);
       if(makeBigWall()) { // calculates whether a wall should be a big wall based on the probability specified
         for(int lane = 0; lane < NO_OF_LANES; lane++) { // spread wall over all lanes
-          track[randomRow][lane] = 2;
+          track[row][lane] = 2;
         }
       } else { 
-        /* if the wall should not be big, place it on one randomly picked lane
-         * only center lanes (not the gravel lanes) are picked for wall placement
-         * but if the lane that the wall is on touches a gravel lane, the wall is spread also over the gravel lanes so that they cannot be used to pass by walls without ever changing lane
-         */
-        int randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
-        track[randomRow][randomLane] = 1;
-        if (randomLane == 1) {
-          track[randomRow][0] = 1;
+        if(left) {
+          track[row][1] = 1;
+          track[row][0] = 1; // also add wall to adjacent gravel lane so it can't be avoided by going there
+        } else {
+          track[row][NO_OF_LANES - 2] = 1;
+          track[row][NO_OF_LANES - 1] = 1; // also add wall to adjacent gravel lane so it can't be avoided by going there
         }
-        if (randomLane == NO_OF_LANES - 2) {
-          track[randomRow][NO_OF_LANES - 1] = 1;
-        }
+        left = !left;
       }
-    }
+    }      
   }
 
   /* function that determines the fill color of the rectangles that make up the track */
@@ -190,14 +196,12 @@ public class Track {
     }
   }
 
-  public boolean randomNumberOk(int r) { // there is no wall in this line or the three lines before or after → ensures that the player is able to change lanes in order to avoid normal walls
-    return (track[r][1] == 0 && track[r][2] == 0)
-            && (track[r + 1][1] == 0 && track[r + 1][2] == 0)
-            && (track[r - 1][1] == 0 && track[r - 1][2] == 0)
-            && (track[r + 2][1] == 0 && track[r + 2][2] == 0)
-            && (track[r - 2][1] == 0 && track[r - 2][2] == 0)
-            && (track[r + 3][1] == 0 && track[r + 3][2] == 0)
-            && (track[r - 3][1] == 0 && track[r - 3][2] == 0);
+  public boolean randomNumberOk(int r, IntList wallRows) { // there is no wall in this line or the three lines before or after → ensures that the player is able to change lanes in order to avoid normal walls
+    return !wallRows.hasValue(r)
+        && !wallRows.hasValue(r-1)
+        && !wallRows.hasValue(r+1)
+        && !wallRows.hasValue(r-2)
+        && !wallRows.hasValue(r+2);
   }
 
   public int generateRandomNumber(int min, int max) {
@@ -255,8 +259,12 @@ public class Track {
   private boolean isAnyPartOfTheBallOnAWall(int lane) {
     /* the ball is tracked on its top. So the first parameter only checks whether the top of the ball is on a wall
      * therefore we need the second double boolean to check whether in the row under the top of the ball is a wall and the tail of the ball is still next to it.
+     * the ALLOWANCE that is subtracted are to allow moving, even when the ball is still technically next to the wall, 
+     * but based on the speed it won't touch the wall because once it reaches the other lane the game (and wall) will have moved down already
+     * if we leave the ALLOWANCE pixels out the user feels like the move was not registered.
      * Don't touch it. Took me hours to figure out how to do it right */
-    return fieldIsHardWall(position+1, lane) || (fieldIsHardWall(position, lane) && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - BALL_SPACING*2) <= pixelPosition));
+     int ALLOWANCE = 17;
+    return fieldIsHardWall(position+1, lane) || (fieldIsHardWall(position, lane) && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - BALL_SPACING*2 - ALLOWANCE) <= pixelPosition));
   }
   
   public void jump() {

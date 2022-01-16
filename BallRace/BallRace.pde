@@ -82,6 +82,9 @@ private void startGame() {
  * /laneChanged - sends new lane
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
+ * /changeLaneProhibited - to play error sound
+ * /startGame
+ * /stopGame
  */
 void sendOscMessage(String scope, int value) {
   OscMessage message = new OscMessage(scope);
