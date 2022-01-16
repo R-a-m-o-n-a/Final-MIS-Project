@@ -15,9 +15,10 @@ int SENDING_PORT = 12000;
 // variables for the game itself
 int startTime;
 Track track;
+boolean isGameRunning = false;
 
 void setup(){
-  size(1500,800);
+  size(1500, 800);
   frameRate(60);
   
   oscP5 = new OscP5(this, LISTENING_PORT); // start oscP5, listening for incoming messages at specified port
@@ -35,7 +36,9 @@ void setup(){
 // loop that is repeated all over again
 void draw() {
   background(0, 0, 0); 
-  track.draw();
+  if(isGameRunning ||frameCount < 5) { 
+    track.draw();
+  } 
 }
 
 // alternative key controls for testing
@@ -46,9 +49,18 @@ void keyPressed() {
     track.moveCircle(1);
   } else if(key == 'q') { // to examine specific behaviours
     frameRate(2);
-  } else if(key == 'f') { // to examine specific behaviours
-    track.makeRedWallsPervious();
+  } else if(key ==  ' ') {
+    if(isGameRunning) {
+      track.makeRedWallsPervious();
+    } else {
+      startGame();
+    }
   }
+}
+
+private void startGame() {
+  isGameRunning = true;
+  sendOscMessage("/startGame", 1);
 }
 
 /** Send OSC Messages to PD.

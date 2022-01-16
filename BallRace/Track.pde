@@ -44,12 +44,22 @@ public class Track {
   }
 
   // move the whole track down so that the ball is "driving" without actually changing y position
-  public void drive(int pixelsToMove) {
+  public void drive() {
+    
+    if(position >= TRACK_LENGTH-3) { // reached end of track
+      frameRate(frameRate*0.7); // slow game down exponentially
+    } if(position >= TRACK_LENGTH-2) { // stop game
+      println("END");
+      isGameRunning = false;
+      sendOscMessage("/stopGame", 0);
+      stop();
+    }
+    
     if (isColliding() && collision == null) { // new collision detected → do not move forward
       sendOscMessage("/hitWall", COLLISION_TIMEOUT); // tell PD that we bumped into a wall and how long we are going to be unable to move (in ms)
       collision = new WallCollision(position+1, COLLISION_TIMEOUT); // create a new WallCollision object for the current collision
     } else if (collision == null) { // only move forward if no collision is currently freezing the ball
-      pixelPosition += pixelsToMove; // add the amount of pixels to move to the current pixelPosition
+      pixelPosition += speed; // add the amount of pixels to move to the current pixelPosition
       if (pixelPosition < 0) pixelPosition = 0; // might be obsolete, but just in case a negative value ever gets passed
       
       /* the position (the row we are currently on) is calculated
@@ -62,17 +72,7 @@ public class Track {
   }
 
   // loop that draws and drives the game
-  public void draw() {
-    
-    if(position >= TRACK_LENGTH-3) { // reached end of track
-      frameRate(frameRate*0.7); // slow game down exponentially
-    } if(position >= TRACK_LENGTH-2) { // stop game
-      println("END");
-      stop();
-    }
-   
-    drive(speed); // move the track
-    
+  public void draw() {    
     if(collision != null) { // if there is still a collision
       if(collision.isOver()) { // if the timer is run out and we are allowed to move again
         removeWall(collision.getRow()); // remove the wall so we can continue driving
