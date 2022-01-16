@@ -131,7 +131,6 @@ public class Track {
     for(int i = 0; i < wallRows.size(); i++) { // add normal walls to each previously picked row
       int row = wallRows.get(i);
       
-      println(i + " " + row + " " + left);
       if(makeBigWall()) { // calculates whether a wall should be a big wall based on the probability specified
         for(int lane = 0; lane < NO_OF_LANES; lane++) { // spread wall over all lanes
           track[row][lane] = 2;
