@@ -9,9 +9,11 @@ int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom w
 
 // wall parameters
 int NO_OF_WALLS = 170;
-int PERCENTAGE_OF_BIG_WALLS = 35;
+int PERCENTAGE_OF_BIG_WALLS = 0;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
 int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 2.5);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
+int MAX_CONSECUTIVE_WALLS_ON_ONE_LANE = 2;
+int CHANGING_AFTER_WALL_ALLOWANCE = 15; // for explanantion see function isAnyPartOfTheBallOnAWall()
 
 // colors
 color GRAVEL_COLOR = color(53,51,50);
@@ -127,7 +129,8 @@ public class Track {
       wallRows.append(randomRow);
     }
     wallRows.sort();
-    boolean left = true;
+    int prevLane = 2;
+    int prevLaneCount = 0;
     for(int i = 0; i < wallRows.size(); i++) { // add normal walls to each previously picked row
       int row = wallRows.get(i);
       
@@ -135,15 +138,35 @@ public class Track {
         for(int lane = 0; lane < NO_OF_LANES; lane++) { // spread wall over all lanes
           track[row][lane] = 2;
         }
-      } else { 
-        if(left) {
-          track[row][1] = 1;
-          track[row][0] = 1; // also add wall to adjacent gravel lane so it can't be avoided by going there
+      } else { // place wall on random lane
+        int randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
+        
+        // the following code makes sure that not more than MAX_CONSECUTIVE_WALLS_ON_ONE_LANE walls are placed on one single lane
+        if(randomLane == prevLane) {
+          if(prevLaneCount >= MAX_CONSECUTIVE_WALLS_ON_ONE_LANE) {
+            while(randomLane == prevLane) {
+              println("recalculating because max on lane " + prevLane + " and row " + row);
+              randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
+            }
+            prevLane = randomLane;
+            prevLaneCount = 1;
+          } else {
+            prevLaneCount++;
+          }
         } else {
-          track[row][NO_OF_LANES - 2] = 1;
-          track[row][NO_OF_LANES - 1] = 1; // also add wall to adjacent gravel lane so it can't be avoided by going there
+          prevLane = randomLane;
+          prevLaneCount = 1;
         }
-        left = !left;
+        
+        track[row][randomLane] = 1; // set the wall on the calculated position        
+        
+         // also add wall to adjacent gravel lane so it can't be avoided by going there
+        if(randomLane == 1) {
+          track[row][0] = 1;
+        } 
+        if(randomLane == NO_OF_LANES - 2) {
+          track[row][NO_OF_LANES - 1] = 1;
+        }
       }
     }      
   }
@@ -258,12 +281,11 @@ public class Track {
   private boolean isAnyPartOfTheBallOnAWall(int lane) {
     /* the ball is tracked on its top. So the first parameter only checks whether the top of the ball is on a wall
      * therefore we need the second double boolean to check whether in the row under the top of the ball is a wall and the tail of the ball is still next to it.
-     * the ALLOWANCE that is subtracted are to allow moving, even when the ball is still technically next to the wall, 
+     * the CHANGING_AFTER_WALL_ALLOWANCE that is subtracted are to allow moving, even when the ball is still technically next to the wall, 
      * but based on the speed it won't touch the wall because once it reaches the other lane the game (and wall) will have moved down already
-     * if we leave the ALLOWANCE pixels out the user feels like the move was not registered.
+     * if we leave the CHANGING_AFTER_WALL_ALLOWANCE pixels out the user feels like the move was not registered.
      * Don't touch it. Took me hours to figure out how to do it right */
-     int ALLOWANCE = 17;
-    return fieldIsHardWall(position+1, lane) || (fieldIsHardWall(position, lane) && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - BALL_SPACING*2 - ALLOWANCE) <= pixelPosition));
+    return fieldIsHardWall(position+1, lane) || (fieldIsHardWall(position, lane) && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - BALL_SPACING*2 - CHANGING_AFTER_WALL_ALLOWANCE) <= pixelPosition));
   }
   
   public void jump() {
