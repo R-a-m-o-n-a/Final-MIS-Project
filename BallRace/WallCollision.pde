@@ -4,9 +4,9 @@ public class WallCollision {
   int impactTime;
   
   WallCollision(int row, int timeout) {
-   this.impactTime = millis() - startTime;
-   this.row = row;
-   this.timeout = timeout;
+    this.impactTime = millis() - startTime;
+    this.row = row;
+    this.timeout = timeout;
   }
   
   public boolean isOver() { // the timeout is over, the ball can move again

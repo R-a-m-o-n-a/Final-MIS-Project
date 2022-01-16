@@ -5,41 +5,41 @@ int TRACK_LENGTH = 1000; // how many rows in the track array
 int TRACK_WIDTH = 600; // how many pixels the whole track is wide
 int ROW_HEIGHT = 80; // how many pixels each row is high
 int NO_OF_LANES = 4;
-int CIRCLE_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
+int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
 // wall parameters
 int NO_OF_WALLS = 170;
-int PERCENTAGE_OF_BIG_WALLS = 20;
+int PERCENTAGE_OF_BIG_WALLS = 35;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
-int PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS = ceil(ROW_HEIGHT * 2.5);  // the walls are pervious for an amount of pixels moved, that way the difficulty stays the same if we change the speed
+int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 2.5);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
 
 // colors
 color GRAVEL_COLOR = color(53,51,50);
 color TRACK_COLOR_A = color(20,65,120);
 color TRACK_COLOR_B = color(0,55,104);
-color WALL_COLOR = color(240,80,50);
-color BIG_WALL_COLOR = color(240,20,50);
+color WALL_COLOR = color(240,180,70);
+color BIG_WALL_COLOR = color(200,20,50);
 
 public class Track {
   int[][] track = new int[TRACK_LENGTH][NO_OF_LANES];
-  Circle circle;
+  Ball ball;
   int laneWidth = TRACK_WIDTH / NO_OF_LANES;
   int leftBorderX; // the pixel value of the left side of the track (the window is bigger than the track)
-  int circleTop; // top-most position of the circle
+  int ballTopY; // top-most position of the ball
   int maxShownLanes; // the maximum amount of lanes that could be visible on screen so that the others can be disregarded when drawing the track to save calculation power
   int position = 2; // the field of the track the ball is currently on, gets calculated based on the pixelPosition
   int pixelPosition = 0; // a value that counts up pixel by pixel when the track starts moving
   int speed = 3; // amount of pixels that we move each frame
   WallCollision collision = null; // variable that will be filled once we hit a wall
-  boolean redWallsArePervious = false; // if the user claps, the red walls will become pervious for a specified amount of milliseconds, during this time this variable is true
-  int perviousWallsStartPixelPosition; // will hold the start position of when the red walls became pervious
+  boolean isBallJumping = false; // if the user claps, the ball will jump and red walls can be avoided while this variable is true
+  int pixelPositionAtJumpStart; // will hold the start position of when the ball started jumping
 
-  // constructor: creates the circle and sets some important variables. Also fills track with walls
+  // constructor: creates the ball and sets some important variables. Also fills track with walls
   public Track() {
     maxShownLanes = height / ROW_HEIGHT + 3; // add 3 more lanes just to be safe (for lanes going in and out)
     leftBorderX = ((width-TRACK_WIDTH)/2);
-    circle = new Circle(NO_OF_LANES, TRACK_WIDTH, ROW_HEIGHT, CIRCLE_SPACING);
-    circleTop = circle.getTopY();
+    ball = new Ball(NO_OF_LANES, TRACK_WIDTH, ROW_HEIGHT, BALL_SPACING);
+    ballTopY = ball.getTopY();
     fillTrackWithWalls();
   }
 
@@ -51,7 +51,7 @@ public class Track {
     } if(position >= TRACK_LENGTH-2) { // stop game
       println("END");
       isGameRunning = false;
-      sendOscMessage("/stopGame", 0);
+      sendOscMessage("/stopGame", 0); // tell PD that the game has stopped
       stop();
     }
     
@@ -63,10 +63,10 @@ public class Track {
       if (pixelPosition < 0) pixelPosition = 0; // might be obsolete, but just in case a negative value ever gets passed
       
       /* the position (the row we are currently on) is calculated
-       * the first part [pixelPosition - (CIRCLE_SPACING + laneHeight/2)] aligns the top edge of the circle with the row change (the line between two rows)
+       * the first part [pixelPosition - (BALL_SPACING + laneHeight/2)] aligns the top edge of the ball with the row change (the line between two rows)
        * we then divide all pixels that we have driven so far by the height of the row
-       * we need to add two because the circle start position is already on the track and not before the track */
-      position = (pixelPosition - (CIRCLE_SPACING + ROW_HEIGHT/2)) / ROW_HEIGHT + 2; 
+       * we need to add two because the ball start position is already on the track and not before the track */
+      position = (pixelPosition - (BALL_SPACING + ROW_HEIGHT/2)) / ROW_HEIGHT + 2; 
       calculateWallDistance(); // to create sound of wall approaching
     }
   }
@@ -76,23 +76,23 @@ public class Track {
     if(collision != null) { // if there is still a collision
       if(collision.isOver()) { // if the timer is run out and we are allowed to move again
         removeWall(collision.getRow()); // remove the wall so we can continue driving
-        /* we also need to remove the wall on the previous row, because if the tail of the ball gets stuck in a reappearing red wall that was pervious before,
+        /* we also need to remove the wall on the previous row, because if the tail of the ball gets stuck in a red wall while coming down from a jump
          * this is the actual wall that needs to be removed. In any other case the previous row is empty anyways and it will not change anything. */
         removeWall(collision.getRow()-1);
         collision = null; // and set the variable to null, so the collision is officially over
       }
     }
     
-    if(redWallsArePervious) {
-      float factor = abs((perviousWallsStartPixelPosition - pixelPosition) /(float)( PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS)); // get percentage of how many pixels have passed
+    if(isBallJumping) {
+      float factor = abs((pixelPositionAtJumpStart - pixelPosition) /(float) JUMP_DURATION_IN_PIXELS); // get percentage of how many pixels have passed
       if(factor>0.5) factor = 1 - factor; // map values from 0→1 to 0→0.5→0
       factor*=1.5; // here we can control how big the maximum factor (maximum size of ball) should be
       factor += 1; // add 1 for 1→1.5→1
-      circle.setBallSize(factor);
+      ball.setBallSize(factor);
     }
-    if(redWallsArePervious && perviousWallsStartPixelPosition + PERVIOUS_WALLS_FOR_AMOUNT_OF_PIXELS <= pixelPosition) { // make red walls solid again after moved specified amount of pixels
-       redWallsArePervious = false;
-       circle.setBallSize(1);
+    if(isBallJumping && pixelPositionAtJumpStart + JUMP_DURATION_IN_PIXELS <= pixelPosition) { // make red walls solid again after moved specified amount of pixels
+       isBallJumping = false;
+       ball.setBallSize(1);
     }
   
     // draw the actual track
@@ -108,7 +108,7 @@ public class Track {
       }
     }
 
-    circle.draw();
+    ball.draw();
   }
 
   /* function called by the constructor to add walls on the track
@@ -164,11 +164,13 @@ public class Track {
       fillColor = WALL_COLOR;
     }
     if (track[row][lane] == 2) {
-      if(redWallsArePervious) {
+      /* this was to make the walls penetrable and semi-transparent as an alternative to the ball jumping
+      if(isBallJumping) {
         wallColor = lerpColor(BIG_WALL_COLOR, trackColor, 0.5);
       } else {
+      */
         wallColor = BIG_WALL_COLOR;
-      }
+      //}
       fillColor = wallColor;
     }
     // during a collision the wall slowly disappears until the player is allowed to move again, so the color is interpolated between the wall and the track color
@@ -179,7 +181,7 @@ public class Track {
   } 
   
   private boolean isColliding() { // is the ball touching a wall?
-    return isAnyPartOfTheBallOnAWall(circle.getLane());
+    return isAnyPartOfTheBallOnAWall(ball.getLane());
   }
   
   public void removeWall(int row) { // fills an entire track row with 0, so that there is no more wall
@@ -210,14 +212,14 @@ public class Track {
     return generateRandomNumber(7, TRACK_LENGTH-6);
   }
 
-  public void moveCircle(int dir) { // tries to change lane, if not allowed will not change
+  public void moveBall(int dir) { // tries to change lane, if not allowed will not change
     if(collision == null) {
-      boolean isBallOnGravel = circle.move(dir, movingWouldCauseCollision(dir));
+      boolean isBallOnGravel = ball.move(dir, movingWouldCauseCollision(dir));
     }
   }
   
   private boolean movingWouldCauseCollision(int dir) { // is any part of the ball next to a wall? In that case we are not allowed to change lane
-    int newLane = circle.getLane() + dir;
+    int newLane = ball.getLane() + dir;
     if(newLane < 0 || newLane >= NO_OF_LANES) return true;
     
     return isAnyPartOfTheBallOnAWall(newLane);
@@ -251,23 +253,23 @@ public class Track {
   }
   
   private boolean isAnyPartOfTheBallOnAWall(int lane) {
-    /* the circle is tracked on its top. So the first parameter only checks whether the top of the ball is on a wall
+    /* the ball is tracked on its top. So the first parameter only checks whether the top of the ball is on a wall
      * therefore we need the second double boolean to check whether in the row under the top of the ball is a wall and the tail of the ball is still next to it.
      * Don't touch it. Took me hours to figure out how to do it right */
-    return fieldIsHardWall(position+1, lane) || (fieldIsHardWall(position, lane) && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - CIRCLE_SPACING*2) <= pixelPosition));
+    return fieldIsHardWall(position+1, lane) || (fieldIsHardWall(position, lane) && !((position - 1) * ROW_HEIGHT + (ROW_HEIGHT/2 - BALL_SPACING*2) <= pixelPosition));
   }
   
-  public void makeRedWallsPervious() {
-    // we only start the pervious walls timeout if it is not currently running because otherwise the player could keep the mode on endlessly
-    if(!redWallsArePervious) {
-      this.perviousWallsStartPixelPosition = pixelPosition;
-      redWallsArePervious = true;
+  public void jump() {
+    // we only start the jumping timeout if it is not currently running because otherwise the player could keep the mode on endlessly
+    if(!isBallJumping) {
+      this.pixelPositionAtJumpStart = pixelPosition;
+      isBallJumping = true;
     }
   }
   
   private boolean fieldIsHardWall(int row, int lane) {
-    // field is hard wall if it either has a normal (orange) wall, or a big (red) wall that is not currently pervious
-    return track[row][lane] == 1 || (track[row][lane] == 2 && !redWallsArePervious);
+    // field is hard wall if it either has a normal (orange) wall, or a big (red) wall that the ball is not currently jumping over
+    return track[row][lane] == 1 || (track[row][lane] == 2 && !isBallJumping);
   }
   
   private void drawFinishLine() {

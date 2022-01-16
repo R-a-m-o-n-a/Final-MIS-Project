@@ -4,7 +4,7 @@ color BALL_COLOR = color(255, 255, 255);
 float STANDARD_OFFSET_RECOVERY_RATE = 0.9;
 float GRAVEL_OFFSET_RECOVERY_RATE = 0.96;
 
-public class Circle {
+public class Ball {
   int lane = 2; // which lane to start on
   int laneWidth;
   int laneHeight;
@@ -16,9 +16,9 @@ public class Circle {
   boolean frameRateResetTimeout = false;
 
   // constructor. sets all the important values that are passed over from the track class
-  public Circle(int noOfLanes, int trackWidth, int laneHeight, int circleSpacing) {
+  public Ball(int noOfLanes, int trackWidth, int laneHeight, int ballSpacing) {
     laneWidth = trackWidth / noOfLanes;
-    ballSize = laneHeight - circleSpacing * 2;
+    ballSize = laneHeight - ballSpacing * 2;
     originalBallSize = ballSize;
     this.noOfLanes = noOfLanes;
     this.laneHeight = laneHeight;
