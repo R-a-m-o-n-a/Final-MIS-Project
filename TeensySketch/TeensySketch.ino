@@ -319,6 +319,14 @@ void handle_received_message(char *received_message) {
 void setup(void)
 {
   Serial.begin(115200);
+
+    // loop for setting up the motors as OUTPUTs. To comment out if not needed.
+    
+  for (int pinNumber = 2; pinNumber < 8; pinNumber++) {
+  pinMode(pinNumber, OUTPUT);
+  digitalWrite(pinNumber, LOW);
+}
+
   if (!bno.begin())
   {
     Serial.print("No BNO055 detected");
@@ -459,12 +467,9 @@ void setup(void)
 
   }
 
-  // loop for setting up the motors as OUTPUTs. To comment out if not needed.
 
-  for (int pinNumber = 2; pinNumber < 8; pinNumber++) {
-  pinMode(pinNumber, OUTPUT);
-  digitalWrite(pinNumber, LOW);
-}
+
+  
 
   delay(1000);
   
