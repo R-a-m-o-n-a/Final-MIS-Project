@@ -311,10 +311,62 @@ void handle_received_message(char *received_message) {
     analogWrite(motor2_pin, 0);
     
   }
-} 
+ 
 
+if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
 
+    /*
+    Serial.print("activating message 1: ");
+    Serial.print(command);
+    Serial.print(" ");
+    Serial.print(value);
+    Serial.println(" ");
+    */
+    
+    analogWrite(motor3_pin, 100);
+    
+  }
+  
+  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"0") == 0) {
 
+    /*
+    Serial.print("activating message 2: ");
+    Serial.print(command);
+    Serial.print(" ");
+    Serial.print(value);
+    Serial.println(" ");
+    */
+    analogWrite(motor3_pin, 0);
+    
+  }
+
+  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
+
+    /*
+    Serial.print("activating message 1: ");
+    Serial.print(command);
+    Serial.print(" ");
+    Serial.print(value);
+    Serial.println(" ");
+    */
+    
+    analogWrite(motor4_pin, 100);
+    
+  }
+  
+  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"0") == 0) {
+
+    /*
+    Serial.print("activating message 2: ");
+    Serial.print(command);
+    Serial.print(" ");
+    Serial.print(value);
+    Serial.println(" ");
+    */
+    analogWrite(motor4_pin, 0);
+    
+  }
+}
 
 void setup(void)
 {
