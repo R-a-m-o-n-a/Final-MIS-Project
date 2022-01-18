@@ -313,7 +313,7 @@ void handle_received_message(char *received_message) {
   }
  
 
-if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
+if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
 
     /*
     Serial.print("activating message 1: ");
@@ -327,7 +327,7 @@ if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
     
   }
   
-  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"0") == 0) {
+  if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"0") == 0) {
 
     /*
     Serial.print("activating message 2: ");
@@ -340,7 +340,7 @@ if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
     
   }
 
-  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
+  if (strcmp(command,"motor4_pattern1") == 0 && strcmp(value,"1") == 0) {
 
     /*
     Serial.print("activating message 1: ");
@@ -354,7 +354,7 @@ if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
     
   }
   
-  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"0") == 0) {
+  if (strcmp(command,"motor4_pattern1") == 0 && strcmp(value,"0") == 0) {
 
     /*
     Serial.print("activating message 2: ");
