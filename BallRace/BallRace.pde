@@ -1,7 +1,6 @@
 import controlP5.*; 
 import oscP5.*;
 import netP5.*;
-
 // Variables for communication via OSC messages
 OscP5 oscP5;
 NetAddress PD_Location;
@@ -10,9 +9,22 @@ int LISTENING_PORT = 32000;
 int SENDING_PORT = 12000;
 
 // variables for the game itself
-int startTime;
 Track track;
 boolean isGameRunning = false;
+
+// variables for statistics
+String USER_NAME = "Tim";
+String COMMENT = "";
+Timer gravelTimer = new Timer();
+Timer frozenTimer = new Timer();
+Timer gameTimer = new Timer();
+String stats_startTime;
+int stats_noOfWallsHit = 0;
+int stats_timeSpentOnGravel = 0;
+int stats_timeSpentFrozen = 0;
+int stats_totalGameTime = 0;
+boolean stats_successfullyFinished = false;
+JSONObject stats_json;
 
 // images to display info text
 PImage infoIcon, speechBubble;
@@ -33,7 +45,6 @@ void setup(){
     
   track = new Track();
   noStroke(); // don't draw border on shapes
-  startTime = millis(); // set the start time
 }
 
 // loop that is repeated all over again
@@ -73,6 +84,8 @@ void keyPressed() {
 
 private void startGame() {
   isGameRunning = true;
+  stats_startTime = getCurrentTime();
+  gameTimer.start();
   sendOscMessage("/startGame", 1);
 }
 
@@ -82,6 +95,7 @@ private void startGame() {
  * /laneChanged - sends new lane
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
+ * //wallTypeLaneN - sends 1 if the wall approaching is a yellow one and 2 for the red walls (that are jumpable)
  * /changeLaneProhibited - to play error sound
  * /startGame
  * /stopGame
@@ -102,4 +116,49 @@ void receiveChangeLane(int dir) {
 void receiveClap() {
   println("received OSC message '/clap'");
   track.jump(); 
+}
+
+void exit() {
+  frozenTimer.stop();
+  gravelTimer.stop();
+  gameTimer.stop();
+  
+  println("exited");
+  isGameRunning = false;
+  sendOscMessage("/stopGame", 1);
+  
+  stats_totalGameTime = gameTimer.getTotal();
+  stats_timeSpentOnGravel = gravelTimer.getTotal();
+  stats_timeSpentFrozen = frozenTimer.getTotal();
+    
+
+  String timestamp = fixTime(hour()) + fixTime(minute()) + fixTime(second());
+ 
+  stats_json = new JSONObject();
+
+  stats_json.setString("name", USER_NAME);
+  if(COMMENT.length() > 0)  stats_json.setString("comment", COMMENT);
+  stats_json.setBoolean("successfullyFinished", stats_successfullyFinished);
+  stats_json.setFloat("totalGameTime", stats_totalGameTime/1000.0);
+  stats_json.setFloat("timeSpentOnGravel", stats_timeSpentOnGravel*0.001);
+  stats_json.setFloat("timeSpentFrozen", stats_timeSpentFrozen/1000.0);
+  stats_json.setInt("numberOfWallsHit", stats_noOfWallsHit);
+  stats_json.setString("date", fixTime(day()) + "." + fixTime(month()) + "." + fixTime(year()));
+  stats_json.setString("startTime", stats_startTime);
+  stats_json.setString("finishTime", getCurrentTime());
+
+  saveJSONObject(stats_json, "trial_data/" + USER_NAME + "_" + timestamp + ".json");
+  println("Datei gesichert");
+}
+
+private String getCurrentTime() {
+  return fixTime(hour()) + ":" + fixTime(minute()) + ":" + fixTime(second());
+}
+
+private String fixTime(int time) { // add leading zeros and covert to String
+  String t = String.valueOf(time);
+  
+  if(t.length() < 2) t = "0" + t;
+  
+  return t;
 }

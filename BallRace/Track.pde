@@ -1,17 +1,18 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 // track constants
-int TRACK_LENGTH = 1000; // how many rows in the track array
+int TRACK_LENGTH = 250; // how many rows in the track array
 int TRACK_WIDTH = 600; // how many pixels the whole track is wide
 int ROW_HEIGHT = 80; // how many pixels each row is high
 int NO_OF_LANES = 4;
 int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
 // wall parameters
-int NO_OF_WALLS = 170;
-int PERCENTAGE_OF_BIG_WALLS = 0;
-int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
-int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 2.5);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
+int NO_OF_WALLS = 30;
+int MIN_DISTANCE_BETWEEN_WALLS = 6;
+int PERCENTAGE_OF_BIG_WALLS = 30;
+int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (supposed to be in ms but in reality it is longer)
+int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 3);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
 int MAX_CONSECUTIVE_WALLS_ON_ONE_LANE = 2;
 int CHANGING_AFTER_WALL_ALLOWANCE = 15; // for explanantion see function isAnyPartOfTheBallOnAWall()
 
@@ -52,14 +53,18 @@ public class Track {
       frameRate(frameRate*0.7); // slow game down exponentially
     } if(position >= TRACK_LENGTH-2) { // stop game
       println("END");
+      stats_successfullyFinished = true;
       isGameRunning = false;
       sendOscMessage("/stopGame", 1); // tell PD that the game has stopped
+      exit();
       stop();
     }
     
     if (isColliding() && collision == null) { // new collision detected → do not move forward
+      stats_noOfWallsHit++;
       sendOscMessage("/hitWall", COLLISION_TIMEOUT); // tell PD that we bumped into a wall and how long we are going to be unable to move (in ms)
       collision = new WallCollision(position+1, COLLISION_TIMEOUT); // create a new WallCollision object for the current collision
+      frozenTimer.start();
     } else if (collision == null) { // only move forward if no collision is currently freezing the ball
       pixelPosition += speed; // add the amount of pixels to move to the current pixelPosition
       if (pixelPosition < 0) pixelPosition = 0; // might be obsolete, but just in case a negative value ever gets passed
@@ -77,6 +82,7 @@ public class Track {
   public void draw() {    
     if(collision != null) { // if there is still a collision
       if(collision.isOver()) { // if the timer is run out and we are allowed to move again
+        frozenTimer.stop();
         removeWall(collision.getRow()); // remove the wall so we can continue driving
         /* we also need to remove the wall on the previous row, because if the tail of the ball gets stuck in a red wall while coming down from a jump
          * this is the actual wall that needs to be removed. In any other case the previous row is empty anyways and it will not change anything. */
@@ -218,12 +224,12 @@ public class Track {
     }
   }
 
-  public boolean randomNumberOk(int r, IntList wallRows) { // there is no wall in this line or the three lines before or after → ensures that the player is able to change lanes in order to avoid normal walls
-    return !wallRows.hasValue(r)
-        && !wallRows.hasValue(r-1)
-        && !wallRows.hasValue(r+1)
-        && !wallRows.hasValue(r-2)
-        && !wallRows.hasValue(r+2);
+  public boolean randomNumberOk(int r, IntList wallRows) { // checks whether there is no wall in this line or the lines before or after yet → ensures that the player is able to change lanes in order to avoid normal walls
+    boolean surroundingRowsFree = true;
+    for(int d = 0; d < MIN_DISTANCE_BETWEEN_WALLS; d++) {
+      if(wallRows.hasValue(r+d) || wallRows.hasValue(r-d)) surroundingRowsFree = false;
+    }
+    return surroundingRowsFree;
   }
 
   public int generateRandomNumber(int min, int max) {
@@ -268,12 +274,15 @@ public class Track {
         }
       } while(track[positionOfNextWall][lane] == 0);
       
+      int typeOfWall = track[positionOfNextWall][lane]; // 1 is solid wall → lower sound, 2 is red wall, higher sound (because jumpable)
+      
       // calculate the distance
       int pixelPositionOfNextWall = (positionOfNextWall - 2) * ROW_HEIGHT;
       int distance = pixelPositionOfNextWall - pixelPosition;
       
       if(isAnyPartOfTheBallOnAWall(lane)) distance = 0;
       
+      sendOscMessage("/wallTypeLane"+lane, typeOfWall);
       sendOscMessage("/wallDistanceLane"+lane, distance);
     }
   }
