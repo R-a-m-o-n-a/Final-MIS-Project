@@ -1,0 +1,47 @@
+#N canvas 566 152 633 492 10;
+#X obj 9 384 bubble~;
+#X msg 179 343 radius \$1;
+#X msg 317 343 riseFactor \$1;
+#X obj 9 155 bng 32 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X floatatom 317 299 5 0 0 0 - - -;
+#X obj 179 157 vsl 15 128 0.15 150 1 0 empty radius empty 0 -9 0 10
+-262144 -1 -1 8900 1;
+#X obj 317 157 vsl 15 128 0 3 0 0 empty riseFactor empty 0 -9 0 10
+-262144 -1 -1 423 1;
+#X floatatom 179 298 5 0 0 0 - - -;
+#X obj 179 319 * 0.001;
+#X msg 327 7 Sound Design Toolkit \; (C) 2001 - 2016 \; \; Project
+SOb - soundobject.org \; Project CLOSED - closed.ircam.fr \; Project
+NIW - soundobject.org/niw \; Project SkAT-VG - skatvg.eu;
+#X text 46 4 bubble~ - Bubble model;
+#X text 7 135 Press to trigger a bubble;
+#X text 176 136 Bubble radius (mm);
+#X text 313 136 Rise factor;
+#X obj 226 70 switch~;
+#X obj 226 44 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 226 10 inlet;
+#X obj 477 388 loadbang;
+#X obj 9 439 throw~ ch1;
+#X obj 110 438 throw~ ch2;
+#X obj 483 119 cnv 15 100 60 empty empty empty 20 12 0 14 -203904 -66577
+0;
+#X obj 499 131 r jumpSound;
+#X msg 477 416 \; radius 18.98 \; riseFactor 0.1 \;;
+#X obj 9 406 *~ 4;
+#X connect 0 0 23 0;
+#X connect 1 0 0 0;
+#X connect 2 0 0 0;
+#X connect 3 0 0 0;
+#X connect 4 0 2 0;
+#X connect 5 0 7 0;
+#X connect 6 0 4 0;
+#X connect 7 0 8 0;
+#X connect 8 0 1 0;
+#X connect 15 0 14 0;
+#X connect 16 0 15 0;
+#X connect 17 0 22 0;
+#X connect 21 0 3 0;
+#X connect 23 0 18 0;
+#X connect 23 0 19 0;
