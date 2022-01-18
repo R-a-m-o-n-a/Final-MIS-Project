@@ -322,10 +322,10 @@ void setup(void)
 
     // loop for setting up the motors as OUTPUTs. To comment out if not needed.
     
-  for (int pinNumber = 2; pinNumber < 8; pinNumber++) {
-  pinMode(pinNumber, OUTPUT);
-  digitalWrite(pinNumber, LOW);
-}
+  
+  pinMode(motor1_pin, OUTPUT);
+  digitalWrite(motor1_pin, LOW);
+
 
   if (!bno.begin())
   {
@@ -478,6 +478,9 @@ void setup(void)
 
 void loop(void)
 {
+
+  receive_message();
+  
   //
   unsigned long tStart = micros();
   sensors_event_t orientationData;
