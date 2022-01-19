@@ -280,9 +280,9 @@ public class Track {
       int pixelPositionOfNextWall = (positionOfNextWall - 2) * ROW_HEIGHT;
       int distance = pixelPositionOfNextWall - pixelPosition;
       
-      if(isAnyPartOfTheBallOnAWall(lane)) distance = 0;
+      if(isAnyPartOfTheBallOnAWall(lane)) distance = -1000;
       
-      if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE) {
+      if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE && collision != null) {
         sendOscMessage("/wallTypeLane"+lane, typeOfWall);
         sendOscMessage("/wallDistanceLane"+lane, distance);
       } else {
