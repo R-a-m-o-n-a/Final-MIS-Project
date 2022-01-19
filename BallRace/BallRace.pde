@@ -86,7 +86,7 @@ private void startGame() {
   isGameRunning = true;
   stats_startTime = getCurrentTime();
   gameTimer.start();
-  sendOscMessage("/startGame", 0);
+  sendOscMessage("/startGame", 1);
 }
 
 /** Send OSC Messages to PD.
@@ -125,7 +125,7 @@ void exit() {
   
   println("exited");
   isGameRunning = false;
-  sendOscMessage("/stopGame", 1);
+  sendOscMessage("/stopGame", 0);
   
   stats_totalGameTime = gameTimer.getTotal();
   stats_timeSpentOnGravel = gravelTimer.getTotal();
