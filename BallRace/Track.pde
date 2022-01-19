@@ -283,7 +283,7 @@ public class Track {
       if(isAnyPartOfTheBallOnAWall(lane)) distance = 0;
       
       sendOscMessage("/wallTypeLane"+lane, typeOfWall);
-      sendOscMessage("/wallDistanceLane"+lane, distance);
+      sendOscMessage("/wallDistanceLane"+lane, distance +120);
     }
   }
   
