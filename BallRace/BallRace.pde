@@ -86,7 +86,7 @@ private void startGame() {
   isGameRunning = true;
   stats_startTime = getCurrentTime();
   gameTimer.start();
-  sendOscMessage("/startGame", 1);
+  sendOscMessage("/startGame", 0);
 }
 
 /** Send OSC Messages to PD.
