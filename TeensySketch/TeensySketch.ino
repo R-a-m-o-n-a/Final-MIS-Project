@@ -323,7 +323,7 @@ if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
     Serial.println(" ");
     */
     
-    analogWrite(motor3_pin, 100);
+    analogWrite(motor3_pin, 130);
     
   }
   
@@ -350,7 +350,7 @@ if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
     Serial.println(" ");
     */
     
-    analogWrite(motor4_pin, 100);
+    analogWrite(motor4_pin, 130);
     
   }
   

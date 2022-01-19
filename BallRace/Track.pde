@@ -32,7 +32,7 @@ public class Track {
   int maxShownLanes; // the maximum amount of lanes that could be visible on screen so that the others can be disregarded when drawing the track to save calculation power
   int position = 2; // the field of the track the ball is currently on, gets calculated based on the pixelPosition
   int pixelPosition = 0; // a value that counts up pixel by pixel when the track starts moving
-  int speed = 3; // amount of pixels that we move each frame
+  int speed = 4; // amount of pixels that we move each frame
   WallCollision collision = null; // variable that will be filled once we hit a wall
   boolean isBallJumping = false; // if the user claps, the ball will jump and red walls can be avoided while this variable is true
   int pixelPositionAtJumpStart; // will hold the start position of when the ball started jumping

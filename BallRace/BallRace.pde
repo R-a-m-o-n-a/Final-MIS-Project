@@ -126,7 +126,7 @@ void exit() {
   
   println("exited");
   isGameRunning = false;
-  sendOscMessage("/stopGame", 1);
+  sendOscMessage("/stopGame", 0);
   
   stats_totalGameTime = gameTimer.getTotal();
   stats_timeSpentOnGravel = gravelTimer.getTotal();
