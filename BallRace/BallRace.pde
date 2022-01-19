@@ -7,6 +7,7 @@ NetAddress PD_Location;
 String PD_IP = "127.0.0.1";
 int LISTENING_PORT = 32000;
 int SENDING_PORT = 12000;
+int THRESHOLD_FOR_SENDING_WALL_DISTANCE = 500;
 
 // variables for the game itself
 Track track;
