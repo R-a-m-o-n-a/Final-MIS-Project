@@ -8,7 +8,7 @@ int NO_OF_LANES = 4;
 int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
 // wall parameters
-int NO_OF_WALLS = 30;
+int NO_OF_WALLS = 25;
 int MIN_DISTANCE_BETWEEN_WALLS = 6;
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
@@ -165,13 +165,16 @@ public class Track {
         }
         
         track[row][randomLane] = 1; // set the wall on the calculated position        
+        track[row+1][randomLane] = 1; // spread normal walls over two rows so we are sure they can't be skipped       
         
          // also add wall to adjacent gravel lane so it can't be avoided by going there
         if(randomLane == 1) {
           track[row][0] = 1;
+          track[row+1][0] = 1;
         } 
         if(randomLane == NO_OF_LANES - 2) {
           track[row][NO_OF_LANES - 1] = 1;
+          track[row+1][NO_OF_LANES - 1] = 1;
         }
       }
     }      
@@ -226,7 +229,7 @@ public class Track {
 
   public boolean randomNumberOk(int r, IntList wallRows) { // checks whether there is no wall in this line or the lines before or after yet → ensures that the player is able to change lanes in order to avoid normal walls
     boolean surroundingRowsFree = true;
-    for(int d = 0; d < MIN_DISTANCE_BETWEEN_WALLS; d++) {
+    for(int d = 0; d < MIN_DISTANCE_BETWEEN_WALLS+1; d++) {
       if(wallRows.hasValue(r+d) || wallRows.hasValue(r-d)) surroundingRowsFree = false;
     }
     return surroundingRowsFree;
