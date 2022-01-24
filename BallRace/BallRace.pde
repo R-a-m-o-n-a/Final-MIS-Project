@@ -15,6 +15,7 @@ boolean isGameRunning = false;
 
 // variables for statistics
 String USER_NAME = "Tim";
+String USING_VISUAL_MODE = true;
 String COMMENT = "";
 Timer gravelTimer = new Timer();
 Timer frozenTimer = new Timer();
@@ -94,10 +95,10 @@ private void startGame() {
  * Implemented Messages are
  * /frameRateChanged - sends new frameRate
  * /laneChanged - sends new lane
+ * /changeLaneProhibited - to play error sound
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
- * /changeLaneProhibited - to play error sound
  * /startGame
  * /stopGame
  */
@@ -137,6 +138,7 @@ void exit() {
   stats_json = new JSONObject();
 
   stats_json.setString("name", USER_NAME);
+  stats_json.setBoolean("visual", USING_VISUAL_MODE);
   if(COMMENT.length() > 0)  stats_json.setString("comment", COMMENT);
   stats_json.setBoolean("successfullyFinished", stats_successfullyFinished);
   stats_json.setFloat("totalGameTime", stats_totalGameTime/1000.0);
