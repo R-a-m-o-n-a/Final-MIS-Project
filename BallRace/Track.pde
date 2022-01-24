@@ -36,6 +36,7 @@ public class Track {
   WallCollision collision = null; // variable that will be filled once we hit a wall
   boolean isBallJumping = false; // if the user claps, the ball will jump and red walls can be avoided while this variable is true
   int pixelPositionAtJumpStart; // will hold the start position of when the ball started jumping
+  IntList wallPositionsWarnedAbout = new IntList(); // list holds all the walls that we warned the user about (via PD messages), so that each wall is only warned about once
 
   // constructor: creates the ball and sets some important variables. Also fills track with walls
   public Track() {
@@ -289,10 +290,13 @@ public class Track {
       laneOfNextWall = 2;
       positionOfNextWall = positionOfNextWallLane2;
     }
-      
+    
+    //println(wallPositionsWarnedAbout.size() + " "+ positionOfNextWall + " " + wallPositionsWarnedAbout.hasValue(positionOfNextWall));
+    
     if(positionOfNextWall == 99999) { // no more walls. Just leave the function.
       return;
-    } else {
+    } else { // only send OSC message when wall is first spotted. Only once for each wall
+      
       int typeOfWall = track[positionOfNextWall][laneOfNextWall]; // 1 is solid wall → lower sound, 2 is red wall, higher sound (because jumpable)
       
       // calculate the distance
@@ -304,12 +308,17 @@ public class Track {
         
         if (typeOfWall == 1) {
           sendOscMessage("/wallDistanceLane"+laneOfNextWall, distance);
-          sendOscMessage("/wallType", laneOfNextWall);
+          if(!wallPositionsWarnedAbout.hasValue(positionOfNextWall)) {
+            sendOscMessage("/wallType", laneOfNextWall);
+          }
         }
         else if (typeOfWall == 2) {
           sendOscMessage("/wallDistanceRed", distance);
-          sendOscMessage("/wallType", 5);
+          if(!wallPositionsWarnedAbout.hasValue(positionOfNextWall)) {
+            sendOscMessage("/wallType", 5);
+          }
         }
+        wallPositionsWarnedAbout.append(positionOfNextWall); // add wall to the list of walls we already warned the user about
       }
     }
   }
