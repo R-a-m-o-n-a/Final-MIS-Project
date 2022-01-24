@@ -124,7 +124,6 @@ void exit() {
   gravelTimer.stop();
   gameTimer.stop();
   
-  println("exited");
   isGameRunning = false;
   sendOscMessage("/stopGame", 0);
   

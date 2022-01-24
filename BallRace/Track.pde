@@ -151,7 +151,7 @@ public class Track {
         if(randomLane == prevLane) {
           if(prevLaneCount >= MAX_CONSECUTIVE_WALLS_ON_ONE_LANE) {
             while(randomLane == prevLane) {
-              println("recalculating because max on lane " + prevLane + " and row " + row);
+              //println("recalculating because max on lane " + prevLane + " and row " + row);
               randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
             }
             prevLane = randomLane;
