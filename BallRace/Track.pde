@@ -53,9 +53,9 @@ public class Track {
       frameRate(frameRate*0.7); // slow game down exponentially
     } if(position >= TRACK_LENGTH-2) { // stop game
       println("END");
+      sendOscMessage("/reachedFinishLine", 1);
       stats_successfullyFinished = true;
       isGameRunning = false;
-      sendOscMessage("/stopGame", 1); // tell PD that the game has stopped
       exit();
       stop();
     }

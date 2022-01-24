@@ -14,8 +14,9 @@ Track track;
 boolean isGameRunning = false;
 
 // variables for statistics
-String USER_NAME = "Tim";
-String COMMENT = "";
+String USER_NAME = "SoundTest"; // fill in participant name here
+boolean USING_VISUAL_MODE = true; // true for visual, false for auditory
+String COMMENT = ""; // optional
 Timer gravelTimer = new Timer();
 Timer frozenTimer = new Timer();
 Timer gameTimer = new Timer();
@@ -94,17 +95,19 @@ private void startGame() {
  * Implemented Messages are
  * /frameRateChanged - sends new frameRate
  * /laneChanged - sends new lane
+ * /changeLaneProhibited - to play error sound
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
- * /changeLaneProhibited - to play error sound
  * /startGame
  * /stopGame
+ * /reachedFinishLine
  */
 void sendOscMessage(String scope, int value) {
   OscMessage message = new OscMessage(scope);
   message.add(value);
   oscP5.send(message, PD_Location);
+  println("OSCmessagesent " + scope + " " + value);
 }
 
 // method to handle the change lane when the OSC message /changeLane is received
@@ -125,7 +128,7 @@ void exit() {
   gameTimer.stop();
   
   isGameRunning = false;
-  sendOscMessage("/stopGame", 0);
+  sendOscMessage("/stopGame", 1);
   
   stats_totalGameTime = gameTimer.getTotal();
   stats_timeSpentOnGravel = gravelTimer.getTotal();
@@ -137,6 +140,7 @@ void exit() {
   stats_json = new JSONObject();
 
   stats_json.setString("name", USER_NAME);
+  stats_json.setBoolean("visual", USING_VISUAL_MODE);
   if(COMMENT.length() > 0)  stats_json.setString("comment", COMMENT);
   stats_json.setBoolean("successfullyFinished", stats_successfullyFinished);
   stats_json.setFloat("totalGameTime", stats_totalGameTime/1000.0);
