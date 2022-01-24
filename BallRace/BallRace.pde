@@ -14,9 +14,9 @@ Track track;
 boolean isGameRunning = false;
 
 // variables for statistics
-String USER_NAME = "Tim";
-String USING_VISUAL_MODE = true;
-String COMMENT = "";
+String USER_NAME = "SoundTest"; // fill in participant name here
+boolean USING_VISUAL_MODE = true; // true for visual, false for auditory
+String COMMENT = ""; // optional
 Timer gravelTimer = new Timer();
 Timer frozenTimer = new Timer();
 Timer gameTimer = new Timer();
@@ -101,11 +101,13 @@ private void startGame() {
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
  * /startGame
  * /stopGame
+ * /reachedFinishLine
  */
 void sendOscMessage(String scope, int value) {
   OscMessage message = new OscMessage(scope);
   message.add(value);
   oscP5.send(message, PD_Location);
+  println("OSCmessagesent " + scope + " " + value);
 }
 
 // method to handle the change lane when the OSC message /changeLane is received
@@ -126,7 +128,7 @@ void exit() {
   gameTimer.stop();
   
   isGameRunning = false;
-  sendOscMessage("/stopGame", 0);
+  sendOscMessage("/stopGame", 1);
   
   stats_totalGameTime = gameTimer.getTotal();
   stats_timeSpentOnGravel = gravelTimer.getTotal();
