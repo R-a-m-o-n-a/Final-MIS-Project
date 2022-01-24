@@ -96,7 +96,7 @@ private void startGame() {
  * /laneChanged - sends new lane
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
- * //wallTypeLaneN - sends 1 if the wall approaching is a yellow one and 2 for the red walls (that are jumpable)
+ * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
  * /changeLaneProhibited - to play error sound
  * /startGame
  * /stopGame

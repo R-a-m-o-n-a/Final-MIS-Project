@@ -25,7 +25,7 @@ public class Ball {
     this.laneHeight = laneHeight;
   }
 
-  public boolean move(int dir, boolean wouldCauseCollision) { // returns whether ball is on gravel or not
+  public void move(int dir, boolean wouldCauseCollision) { // returns whether ball is on gravel or not
     boolean wasBallOnGravel = (lane==0 || lane == noOfLanes-1);
 
     /* change is allowed when
@@ -56,8 +56,6 @@ public class Ball {
     isSlowingDown = isBallOnGravel; // slow game down if ball is on gravel
     isSpeedingUp = !isBallOnGravel && wasBallOnGravel; // start gradually going back to normal game speed if ball is moved away from gravel
     if (!isBallOnGravel && !wasBallOnGravel) frameRate(60); // normal speed
-
-    return isBallOnGravel; // return value might be obsolete
   }
 
   public void draw() {

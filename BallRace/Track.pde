@@ -248,8 +248,8 @@ public class Track {
   }
 
   public void moveBall(int dir) { // tries to change lane, if not allowed will not change
-    if(collision == null) {
-      boolean isBallOnGravel = ball.move(dir, movingWouldCauseCollision(dir));
+    if(isGameRunning && collision == null) {
+      ball.move(dir, movingWouldCauseCollision(dir));
     }
   }
   
