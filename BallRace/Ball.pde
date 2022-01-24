@@ -5,7 +5,7 @@ float STANDARD_OFFSET_RECOVERY_RATE = 0.9;
 float GRAVEL_OFFSET_RECOVERY_RATE = 0.96;
 
 public class Ball {
-  int lane = 2; // which lane to start on
+  int lane = 1; // which lane to start on
   int laneWidth;
   int laneHeight;
   int noOfLanes;

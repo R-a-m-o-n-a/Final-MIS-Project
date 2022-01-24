@@ -74,7 +74,7 @@ public class Track {
        * we then divide all pixels that we have driven so far by the height of the row
        * we need to add two because the ball start position is already on the track and not before the track */
       position = (pixelPosition - (BALL_SPACING + ROW_HEIGHT/2)) / ROW_HEIGHT + 2; 
-      calculateWallDistance(); // to create sound of wall approaching
+      sendNextWallMessages(); // to create sound of wall approaching
     }
   }
 
@@ -260,36 +260,58 @@ public class Track {
     return isAnyPartOfTheBallOnAWall(newLane);
   }
   
-  /* for each central lane (not gravel lanes) this function calculates how many pixels ahead the next wall is placed 
-   * it then sends this value to PD in order to generate a sound representing this distance */
-  private void calculateWallDistance() { 
-    for(int lane = 1; lane < NO_OF_LANES - 1; lane++) { // only for middle lanes
-    
-      // find the next wall
-      int positionOfNextWall = position;
-      do {
-        positionOfNextWall++;
-        
-        if(positionOfNextWall >= TRACK_LENGTH) {
-          // no more walls
-          sendOscMessage("/wallDistanceLane"+lane, -1000);
-          return; // leave the function and don't do anything else.
-        }
-      } while(track[positionOfNextWall][lane] == 0);
+  private int getPositionOfNextWallOnLane(int lane) {
+    int positionOfNextWall = position;
+    do {
+      positionOfNextWall++;
       
-      int typeOfWall = track[positionOfNextWall][lane]; // 1 is solid wall → lower sound, 2 is red wall, higher sound (because jumpable)
+      if(positionOfNextWall >= TRACK_LENGTH) {
+        // no more walls
+        //sendOscMessage("/wallDistanceLane"+lane, -1000);
+        return 99999; // leave the function and don't do anything else.
+      }
+    } while(track[positionOfNextWall][lane] == 0);
+    return positionOfNextWall;
+  }
+  
+  /* this is a specific method adapted to the setup of 4 lanes, which is what we use in our PD patch
+   * it replaces a method we had before for an arbitrary number of lanes, but since the PD sketch ended up being specific to 4 lanes, we adapted this message to send exactly what PD needs
+   */
+  private void sendNextWallMessages() {
+    int positionOfNextWallLane1 = getPositionOfNextWallOnLane(1);
+    int positionOfNextWallLane2 = getPositionOfNextWallOnLane(2);
+    
+    int laneOfNextWall;
+    int positionOfNextWall;
+            
+    if(positionOfNextWallLane1 < positionOfNextWallLane2) {
+      laneOfNextWall = 1;
+      positionOfNextWall = positionOfNextWallLane1;
+    } else {
+      laneOfNextWall = 2;
+      positionOfNextWall = positionOfNextWallLane2;
+    }
+    
+    if(positionOfNextWall == 99999) { // no more walls. Just leave the function.
+      return;
+    } else {
+      int typeOfWall = track[positionOfNextWall][laneOfNextWall]; // 1 is solid wall → lower sound, 2 is red wall, higher sound (because jumpable)
       
       // calculate the distance
       int pixelPositionOfNextWall = (positionOfNextWall - 2) * ROW_HEIGHT;
       int distance = pixelPositionOfNextWall - pixelPosition;
       
-      if(isAnyPartOfTheBallOnAWall(lane)) distance = -1000;
+      if(isAnyPartOfTheBallOnAWall(laneOfNextWall)) distance = 0;
       
       if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE && collision != null) {
-        sendOscMessage("/wallTypeLane"+lane, typeOfWall);
-        sendOscMessage("/wallDistanceLane"+lane, distance);
-      } else {
-        sendOscMessage("/wallDistanceLane"+lane, -1000);
+        if (typeOfWall == 1) {
+          sendOscMessage("/wallDistanceLane"+laneOfNextWall, distance);
+          sendOscMessage("/wallType", laneOfNextWall);
+        }
+        else if (typeOfWall == 2) {
+          sendOscMessage("/wallDistanceRed", distance);
+          sendOscMessage("/wallType", 5);
+        }
       }
     }
   }
