@@ -20,7 +20,7 @@ int CHANGING_AFTER_WALL_ALLOWANCE = 15; // for explanantion see function isAnyPa
 color GRAVEL_COLOR = color(53,51,50);
 color TRACK_COLOR_A = color(20,65,120);
 color TRACK_COLOR_B = color(0,55,104);
-color WALL_COLOR = color(240,180,70);
+color WALL_COLOR = color(240,210,70);
 color BIG_WALL_COLOR = color(200,20,50);
 
 public class Track {
@@ -74,6 +74,7 @@ public class Track {
        * we then divide all pixels that we have driven so far by the height of the row
        * we need to add two because the ball start position is already on the track and not before the track */
       position = (pixelPosition - (BALL_SPACING + ROW_HEIGHT/2)) / ROW_HEIGHT + 2; 
+      
       sendNextWallMessages(); // to create sound of wall approaching
     }
   }
@@ -164,17 +165,14 @@ public class Track {
           prevLaneCount = 1;
         }
         
-        track[row][randomLane] = 1; // set the wall on the calculated position        
-        track[row+1][randomLane] = 1; // spread normal walls over two rows so we are sure they can't be skipped       
+        track[row][randomLane] = 1; // set the wall on the calculated position            
         
          // also add wall to adjacent gravel lane so it can't be avoided by going there
         if(randomLane == 1) {
           track[row][0] = 1;
-          track[row+1][0] = 1;
         } 
         if(randomLane == NO_OF_LANES - 2) {
           track[row][NO_OF_LANES - 1] = 1;
-          track[row+1][NO_OF_LANES - 1] = 1;
         }
       }
     }      
@@ -280,7 +278,7 @@ public class Track {
   private void sendNextWallMessages() {
     int positionOfNextWallLane1 = getPositionOfNextWallOnLane(1);
     int positionOfNextWallLane2 = getPositionOfNextWallOnLane(2);
-    
+        
     int laneOfNextWall;
     int positionOfNextWall;
             
@@ -291,7 +289,7 @@ public class Track {
       laneOfNextWall = 2;
       positionOfNextWall = positionOfNextWallLane2;
     }
-    
+      
     if(positionOfNextWall == 99999) { // no more walls. Just leave the function.
       return;
     } else {
@@ -302,8 +300,8 @@ public class Track {
       int distance = pixelPositionOfNextWall - pixelPosition;
       
       if(isAnyPartOfTheBallOnAWall(laneOfNextWall)) distance = 0;
-      
-      if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE && collision != null) {
+      if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE && collision == null) {
+        
         if (typeOfWall == 1) {
           sendOscMessage("/wallDistanceLane"+laneOfNextWall, distance);
           sendOscMessage("/wallType", laneOfNextWall);
@@ -335,7 +333,7 @@ public class Track {
   }
   
   private boolean fieldIsHardWall(int row, int lane) {
-    // field is hard wall if it either has a normal (orange) wall, or a big (red) wall that the ball is not currently jumping over
+    // field is hard wall if it either has a normal (yellow) wall, or a big (red) wall that the ball is not currently jumping over
     return track[row][lane] == 1 || (track[row][lane] == 2 && !isBallJumping);
   }
   
