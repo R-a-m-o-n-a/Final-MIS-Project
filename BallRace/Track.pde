@@ -8,7 +8,7 @@ int NO_OF_LANES = 4;
 int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
 // wall parameters
-int NO_OF_WALLS = 30;
+int NO_OF_WALLS = 25;
 int MIN_DISTANCE_BETWEEN_WALLS = 6;
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
@@ -74,7 +74,7 @@ public class Track {
        * we then divide all pixels that we have driven so far by the height of the row
        * we need to add two because the ball start position is already on the track and not before the track */
       position = (pixelPosition - (BALL_SPACING + ROW_HEIGHT/2)) / ROW_HEIGHT + 2; 
-      calculateWallDistance(); // to create sound of wall approaching
+      sendNextWallMessages(); // to create sound of wall approaching
     }
   }
 
@@ -151,7 +151,7 @@ public class Track {
         if(randomLane == prevLane) {
           if(prevLaneCount >= MAX_CONSECUTIVE_WALLS_ON_ONE_LANE) {
             while(randomLane == prevLane) {
-              println("recalculating because max on lane " + prevLane + " and row " + row);
+              //println("recalculating because max on lane " + prevLane + " and row " + row);
               randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
             }
             prevLane = randomLane;
@@ -165,13 +165,16 @@ public class Track {
         }
         
         track[row][randomLane] = 1; // set the wall on the calculated position        
+        track[row+1][randomLane] = 1; // spread normal walls over two rows so we are sure they can't be skipped       
         
          // also add wall to adjacent gravel lane so it can't be avoided by going there
         if(randomLane == 1) {
           track[row][0] = 1;
+          track[row+1][0] = 1;
         } 
         if(randomLane == NO_OF_LANES - 2) {
           track[row][NO_OF_LANES - 1] = 1;
+          track[row+1][NO_OF_LANES - 1] = 1;
         }
       }
     }      
@@ -226,7 +229,7 @@ public class Track {
 
   public boolean randomNumberOk(int r, IntList wallRows) { // checks whether there is no wall in this line or the lines before or after yet → ensures that the player is able to change lanes in order to avoid normal walls
     boolean surroundingRowsFree = true;
-    for(int d = 0; d < MIN_DISTANCE_BETWEEN_WALLS; d++) {
+    for(int d = 0; d < MIN_DISTANCE_BETWEEN_WALLS+1; d++) {
       if(wallRows.hasValue(r+d) || wallRows.hasValue(r-d)) surroundingRowsFree = false;
     }
     return surroundingRowsFree;
@@ -245,8 +248,8 @@ public class Track {
   }
 
   public void moveBall(int dir) { // tries to change lane, if not allowed will not change
-    if(collision == null) {
-      boolean isBallOnGravel = ball.move(dir, movingWouldCauseCollision(dir));
+    if(isGameRunning && collision == null) {
+      ball.move(dir, movingWouldCauseCollision(dir));
     }
   }
   
@@ -257,36 +260,58 @@ public class Track {
     return isAnyPartOfTheBallOnAWall(newLane);
   }
   
-  /* for each central lane (not gravel lanes) this function calculates how many pixels ahead the next wall is placed 
-   * it then sends this value to PD in order to generate a sound representing this distance */
-  private void calculateWallDistance() { 
-    for(int lane = 1; lane < NO_OF_LANES - 1; lane++) { // only for middle lanes
-    
-      // find the next wall
-      int positionOfNextWall = position;
-      do {
-        positionOfNextWall++;
-        
-        if(positionOfNextWall >= TRACK_LENGTH) {
-          // no more walls
-          sendOscMessage("/wallDistanceLane"+lane, -1000);
-          return; // leave the function and don't do anything else.
-        }
-      } while(track[positionOfNextWall][lane] == 0);
+  private int getPositionOfNextWallOnLane(int lane) {
+    int positionOfNextWall = position;
+    do {
+      positionOfNextWall++;
       
-      int typeOfWall = track[positionOfNextWall][lane]; // 1 is solid wall → lower sound, 2 is red wall, higher sound (because jumpable)
+      if(positionOfNextWall >= TRACK_LENGTH) {
+        // no more walls
+        //sendOscMessage("/wallDistanceLane"+lane, -1000);
+        return 99999; // leave the function and don't do anything else.
+      }
+    } while(track[positionOfNextWall][lane] == 0);
+    return positionOfNextWall;
+  }
+  
+  /* this is a specific method adapted to the setup of 4 lanes, which is what we use in our PD patch
+   * it replaces a method we had before for an arbitrary number of lanes, but since the PD sketch ended up being specific to 4 lanes, we adapted this message to send exactly what PD needs
+   */
+  private void sendNextWallMessages() {
+    int positionOfNextWallLane1 = getPositionOfNextWallOnLane(1);
+    int positionOfNextWallLane2 = getPositionOfNextWallOnLane(2);
+    
+    int laneOfNextWall;
+    int positionOfNextWall;
+            
+    if(positionOfNextWallLane1 < positionOfNextWallLane2) {
+      laneOfNextWall = 1;
+      positionOfNextWall = positionOfNextWallLane1;
+    } else {
+      laneOfNextWall = 2;
+      positionOfNextWall = positionOfNextWallLane2;
+    }
+    
+    if(positionOfNextWall == 99999) { // no more walls. Just leave the function.
+      return;
+    } else {
+      int typeOfWall = track[positionOfNextWall][laneOfNextWall]; // 1 is solid wall → lower sound, 2 is red wall, higher sound (because jumpable)
       
       // calculate the distance
       int pixelPositionOfNextWall = (positionOfNextWall - 2) * ROW_HEIGHT;
       int distance = pixelPositionOfNextWall - pixelPosition;
       
-      if(isAnyPartOfTheBallOnAWall(lane)) distance = -1000;
+      if(isAnyPartOfTheBallOnAWall(laneOfNextWall)) distance = 0;
       
       if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE && collision != null) {
-        sendOscMessage("/wallTypeLane"+lane, typeOfWall);
-        sendOscMessage("/wallDistanceLane"+lane, distance);
-      } else {
-        sendOscMessage("/wallDistanceLane"+lane, -1000);
+        if (typeOfWall == 1) {
+          sendOscMessage("/wallDistanceLane"+laneOfNextWall, distance);
+          sendOscMessage("/wallType", laneOfNextWall);
+        }
+        else if (typeOfWall == 2) {
+          sendOscMessage("/wallDistanceRed", distance);
+          sendOscMessage("/wallType", 5);
+        }
       }
     }
   }
