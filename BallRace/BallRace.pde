@@ -27,6 +27,7 @@ int stats_timeSpentFrozen = 0;
 int stats_totalGameTime = 0;
 boolean stats_successfullyFinished = false;
 JSONObject stats_json;
+boolean statsPublished = false; // they get published when the game ends. also if the window gets closed before, but not if the window gets closed after and they have already been published
 
 // images to display info text
 PImage infoIcon, speechBubble;
@@ -55,7 +56,11 @@ void draw() {
   
   if(isGameRunning) { 
     track.drive();
-  } else {
+  } 
+  
+  track.draw();
+  
+  if(!isGameRunning && !stats_successfullyFinished) {
     image(speechBubble, width-400, height-300, 370, 270);
     image(infoIcon, width-365, height-270, 60, 60);
     fill(color(0,0,0));
@@ -64,7 +69,6 @@ void draw() {
     textLeading(50);
     text("press\nspace bar\nto start", width-360, height-270, 250, 250);
   }
-  track.draw();
 }
 
 // alternative key controls for testing
@@ -73,15 +77,13 @@ void keyPressed() {
     track.moveBall(-1);
   } else if (key == 'd') {
     track.moveBall(1);
-  } else if(key == 'q') { // to examine specific behaviours
-    frameRate(2);
   } else if(key ==  ' ') {
     if(isGameRunning) {
       track.jump();
     } else {
       startGame();
     }
-  }
+  } 
 }
 
 private void startGame() {
@@ -89,6 +91,13 @@ private void startGame() {
   stats_startTime = getCurrentTime();
   gameTimer.start();
   sendOscMessage("/startGame", 1);
+}
+
+public void finishedGame() {
+    sendOscMessage("/reachedFinishLine", 1);
+    stats_successfullyFinished = true;
+    isGameRunning = false;
+    publishStats();
 }
 
 /** Send OSC Messages to PD.
@@ -99,8 +108,7 @@ private void startGame() {
  * /hitWall - sends the amount of milliseconds that the ball will be frozen until it starts again
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
- * /startGame
- * /stopGame
+ * /startGame - 1 if starting, 0 if finished
  * /reachedFinishLine
  */
 void sendOscMessage(String scope, int value) {
@@ -122,13 +130,14 @@ void receiveClap() {
   track.jump(); 
 }
 
-void exit() {
+void stop() {
+  println("STOP");
+}
+
+private void publishStats() {
   frozenTimer.stop();
   gravelTimer.stop();
   gameTimer.stop();
-  
-  isGameRunning = false;
-  sendOscMessage("/stopGame", 1);
   
   stats_totalGameTime = gameTimer.getTotal();
   stats_timeSpentOnGravel = gravelTimer.getTotal();
@@ -152,7 +161,17 @@ void exit() {
   stats_json.setString("finishTime", getCurrentTime());
 
   saveJSONObject(stats_json, "trial_data/" + USER_NAME + "_" + timestamp + ".json");
+  
+  statsPublished = true;
   println("Datei gesichert");
+}
+
+void exit() {
+  isGameRunning = false;
+  if (!statsPublished) {
+    publishStats();
+  }
+  sendOscMessage("/startGame", 0);
 }
 
 private String getCurrentTime() {

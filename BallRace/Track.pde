@@ -53,12 +53,7 @@ public class Track {
     if(position >= TRACK_LENGTH-3) { // reached end of track
       frameRate(frameRate*0.7); // slow game down exponentially
     } if(position >= TRACK_LENGTH-2) { // stop game
-      println("END");
-      sendOscMessage("/reachedFinishLine", 1);
-      stats_successfullyFinished = true;
-      isGameRunning = false;
-      exit();
-      stop();
+      finishedGame();
     }
     
     if (isColliding() && collision == null) { // new collision detected → do not move forward
