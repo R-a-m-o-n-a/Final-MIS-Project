@@ -15,6 +15,7 @@ int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a 
 int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 3);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
 int MAX_CONSECUTIVE_WALLS_ON_ONE_LANE = 2;
 int CHANGING_AFTER_WALL_ALLOWANCE = 15; // for explanantion see function isAnyPartOfTheBallOnAWall()
+int THRESHOLD_FOR_SENDING_WALL_DISTANCE = 500;
 
 // colors
 color GRAVEL_COLOR = color(53,51,50);
