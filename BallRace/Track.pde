@@ -299,20 +299,20 @@ public class Track {
       int pixelPositionOfNextWall = (positionOfNextWall - 2) * ROW_HEIGHT;
       int distance = pixelPositionOfNextWall - pixelPosition;
       
-      if(isAnyPartOfTheBallOnAWall(laneOfNextWall)) distance = 0;
+      if(distance < 0) distance = 0; // the top of the ball is past the wall, but the rest of the ball is still next to it
       if(distance < THRESHOLD_FOR_SENDING_WALL_DISTANCE && collision == null) {
         
         if (typeOfWall == 1) {
-          sendOscMessage("/wallDistanceLane"+laneOfNextWall, distance);
           if(!wallPositionsWarnedAbout.hasValue(positionOfNextWall)) {
             sendOscMessage("/wallType", laneOfNextWall);
           }
+          sendOscMessage("/wallDistanceLane"+laneOfNextWall, distance);
         }
         else if (typeOfWall == 2) {
-          sendOscMessage("/wallDistanceRed", distance);
           if(!wallPositionsWarnedAbout.hasValue(positionOfNextWall)) {
             sendOscMessage("/wallType", 5);
           }
+          sendOscMessage("/wallDistanceRed", distance);
         }
         wallPositionsWarnedAbout.append(positionOfNextWall); // add wall to the list of walls we already warned the user about
       }
