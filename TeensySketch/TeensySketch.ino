@@ -48,9 +48,6 @@ const uint16_t motor1_pin = 2;
 const uint16_t motor2_pin = 3; 
 const uint16_t motor3_pin = 4; 
 const uint16_t motor4_pin = 5; 
-const uint16_t motor5_pin = 6; 
-const uint16_t motor6_pin = 7; 
-
 
 
 #define ANALOG_BIT_RESOLUTION 12 // Only for Teensy
@@ -256,7 +253,7 @@ void handle_received_message(char *received_message) {
   char *value = all_tokens[1];
 
 
-  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"1") == 0) {
+  if (strcmp(command,"motor_lane_0") == 0 && strcmp(value,"1") == 0) {
 
     /*
     Serial.print("activating message 1: ");
@@ -270,7 +267,7 @@ void handle_received_message(char *received_message) {
     
   }
   
-  if (strcmp(command,"motor1_pattern1") == 0 && strcmp(value,"0") == 0) {
+  if (strcmp(command,"motor_lane_0") == 0 && strcmp(value,"0") == 0) {
 
     /*
     Serial.print("activating message 2: ");
@@ -285,7 +282,7 @@ void handle_received_message(char *received_message) {
 
 
   
-  if (strcmp(command,"motor2_pattern1") == 0 && strcmp(value,"1") == 0) {
+  if (strcmp(command,"motor_lane_1") == 0 && strcmp(value,"1") == 0) {
 
     /*
     Serial.print("activating message 1: ");
@@ -299,7 +296,7 @@ void handle_received_message(char *received_message) {
     
   }
   
-  if (strcmp(command,"motor2_pattern1") == 0 && strcmp(value,"0") == 0) {
+  if (strcmp(command,"motor_lane_1") == 0 && strcmp(value,"0") == 0) {
 
     /*
     Serial.print("activating message 2: ");
@@ -313,7 +310,7 @@ void handle_received_message(char *received_message) {
   }
  
 
-if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
+if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
 
     /*
     Serial.print("activating message 1: ");
@@ -327,7 +324,7 @@ if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
     
   }
   
-  if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"0") == 0) {
+  if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"0") == 0) {
 
     /*
     Serial.print("activating message 2: ");
@@ -340,7 +337,7 @@ if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
     
   }
 
-  if (strcmp(command,"motor4_pattern1") == 0 && strcmp(value,"1") == 0) {
+  if (strcmp(command,"motor_lane_3") == 0 && strcmp(value,"1") == 0) {
 
     /*
     Serial.print("activating message 1: ");
@@ -354,7 +351,7 @@ if (strcmp(command,"motor3_pattern1") == 0 && strcmp(value,"1") == 0) {
     
   }
   
-  if (strcmp(command,"motor4_pattern1") == 0 && strcmp(value,"0") == 0) {
+  if (strcmp(command,"motor_lane_3") == 0 && strcmp(value,"0") == 0) {
 
     /*
     Serial.print("activating message 2: ");
@@ -374,10 +371,10 @@ void setup(void)
 
     // loop for setting up the motors as OUTPUTs. To comment out if not needed.
     
-  
-  pinMode(motor1_pin, OUTPUT);
-  digitalWrite(motor1_pin, LOW);
-
+  for (int pinNumber = 2; pinNumber < 6; pinNumber++) {
+  pinMode(pinNumber, OUTPUT);
+  digitalWrite(pinNumber, LOW);
+  }
 
   if (!bno.begin())
   {
