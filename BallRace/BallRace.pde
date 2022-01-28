@@ -10,6 +10,8 @@ int SENDING_PORT = 12000;
 
 // variables for the game itself
 Track track;
+boolean isCountdownRunning = false;
+int countdown = 8;
 boolean isGameRunning = false;
 
 // variables for statistics
@@ -60,13 +62,17 @@ void draw() {
   track.draw();
   
   if(!isGameRunning && !stats_successfullyFinished) {
-    image(speechBubble, width-400, height-300, 370, 270);
-    image(infoIcon, width-365, height-270, 60, 60);
-    fill(color(0,0,0));
-    textAlign(RIGHT);
-    textSize(45);
-    textLeading(50);
-    text("press\nspace bar\nto start", width-360, height-270, 250, 250);
+    if(isCountdownRunning) {
+      displayCountdown();
+    } else {
+      image(speechBubble, width-400, height-300, 370, 270);
+      image(infoIcon, width-365, height-270, 60, 60);
+      fill(color(0,0,0));
+      textAlign(RIGHT);
+      textSize(45);
+      textLeading(50);
+      text("press\nspace bar\nto start", width-360, height-270, 250, 250);
+    }
   }
 }
 
@@ -80,9 +86,53 @@ void keyPressed() {
     if(isGameRunning) {
       track.jump();
     } else {
-      startGame();
+      startCountdown();
     }
   } 
+}
+
+private void startCountdown() {
+  isCountdownRunning = true;
+  sendOscMessage("/startCountdown", 1);
+}
+
+private void displayCountdown() {
+    String text = null;
+    switch (countdown) {
+      case 8:
+        text = "READY?";
+        break;
+      case 7: 
+        delay(500);
+        break;
+      case 5:
+      case 3:
+      case 1:
+      case -1:
+        delay(500);
+        break;
+      case 6:
+      case 4:
+      case 2:
+        text = String.valueOf(countdown/2);
+        delay(500);
+        break;
+      case 0:
+        text = "START";
+        delay(500); 
+        break;
+      case -2:
+        startGame();          
+    }
+    if(text != null) {
+      fill(color(0,0,0));
+      textAlign(CENTER);
+      textSize(170);
+      text(text, width/2+5, height/2+5);
+      fill(color(255,255,255));
+      text(text, width/2, height/2);
+    }
+    countdown--;
 }
 
 private void startGame() {
