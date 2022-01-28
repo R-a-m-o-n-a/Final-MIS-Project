@@ -1,0 +1,262 @@
+#N canvas 793 0 798 808 12;
+#X obj 165 371 r laneChanged;
+#X floatatom 409 472 5 0 0 0 - - -;
+#X floatatom 165 469 5 0 0 0 - - -;
+#X obj 206 712 -;
+#X floatatom 206 768 5 0 0 0 - - -;
+#X obj 165 519 select 0 1 2 3;
+#X text 169 1210 Play on the right with lower volume, f 18;
+#X text -373 1213 Play on the left with lower volume, f 17;
+#X text 444 1214 play on both sides with full volume but different
+pitch (red wall), f 25;
+#X msg 165 568 1;
+#X msg 214 569 2;
+#X msg 112 568 1;
+#X msg 266 569 2;
+#X obj 380 393 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X text -106 1211 Play on both sides with full volume, f 18;
+#X obj -315 1047 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj -55 1043 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 234 1038 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 493 1040 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 707 1040 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 707 1120 s allAlarmsOff;
+#X text 441 1167 Both alarms Red wall, f 12;
+#X obj 206 949 select 1 0 -1 -3 -4;
+#X text 708 1160 No alarms will be played No walls on screen, f 25
+;
+#X obj -365 1133 s loopStart1;
+#X obj -105 1133 s loopStart2;
+#X obj 442 1127 s loopStart4;
+#X obj 161 1130 s loopStart3;
+#X obj 2493 698 vsl 15 128 1 0 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X obj 2493 519 -;
+#X floatatom 2561 1027 5 0 0 0 - - -;
+#X obj 2662 401 r wallDistanceLane2;
+#X obj 2664 446 r wallDistanceLane1;
+#X floatatom 2493 572 5 0 0 0 - - -;
+#X obj 2493 630 /;
+#X floatatom 2493 876 5 0 0 0 - - -;
+#X obj 2459 992 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 2661 360 r wallDistanceRed;
+#X floatatom 2598 478 5 0 0 0 - - -;
+#X floatatom 2599 437 5 0 0 0 - - -;
+#X floatatom 2598 397 5 0 0 0 - - -;
+#X obj 2487 437 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 2512 1091 s volume;
+#X obj 549 1126 RedAlarm;
+#X obj -294 244 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj -294 210 inlet;
+#X obj 409 374 r wallType;
+#X obj -294 283 switch~;
+#X obj 2493 928 sel 1;
+#X obj 1043 161 cnv 15 200 100 empty empty empty 20 12 0 14 -262130
+-66577 0;
+#X obj 1068 200 AlarmModerationPanel;
+#X text 1067 289 Set Alarm values here to be applied globally, f 22
+;
+#X obj 2662 520 r WallDistanceThreshold;
+#X obj 2263 359 r WallDistanceThreshold;
+#X floatatom 2366 474 5 0 0 0 - - -;
+#X floatatom 2604 569 5 0 0 0 - - -;
+#X obj 2386 927 sel 750;
+#X obj 1738 929 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj 1731 720 f;
+#X obj 1803 720 + 1;
+#X floatatom 1731 828 5 0 0 0 - - -;
+#X obj 1805 877 sel 0;
+#X obj 1653 879 sel 1;
+#X obj 1731 771 % 2;
+#X msg 1653 646 stop;
+#X obj 1797 371 sel 100;
+#X obj 1796 419 sel 200;
+#X obj 1796 466 sel 300;
+#X obj 1798 516 sel 400;
+#X obj 1798 565 sel 500;
+#X floatatom 1896 366 5 0 0 0 - - -;
+#X floatatom 1898 420 5 0 0 0 - - -;
+#X floatatom 1899 469 5 0 0 0 - - -;
+#X floatatom 1896 519 5 0 0 0 - - -;
+#X floatatom 1896 571 5 0 0 0 - - -;
+#X floatatom 1738 994 5 0 0 0 - - -;
+#X text 1896 280 Receives values from the Alarm Moderation Dashbord
+with the purpose of setting the Alarm parameters globally, f 29;
+#X obj 1738 1072 s tempo;
+#X text 1737 1114 Sends tempo of the alarm globally so that the alarm
+sub-patches receive it and have it at hand to use it in the occasions
+when it was their turn to play the beeps, f 42;
+#X text 2508 1127 calculated the coefficient to modulate the volume
+of the alarm based on the real time distance from the wall approaching
+\, and sends it globally so that the alarm sub-patches receive it and
+have it at hand to use it in the occasions when it was their turn to
+play the beeps, f 43;
+#X text 2232 1074 when the distance from the wall arrives to 0 (the
+moment at which the amplitude becomes 1) it sends a 0 and sets the
+volume to 0, f 33;
+#X text 2231 1148 loopFinished is also used as a signal for cutting
+the alarm off and declaring "no walls state", f 34;
+#X text 2229 1206 There is also a specific condition which is set for
+the red walls when the player jumps over them and the patch receives
+a negative number, f 36;
+#X text 133 284 We compute the difference between the lane position
+of the ball and the wall \, to determine the position and the volume
+of the alarm sound to be played, f 51;
+#X obj 1731 663 metro 50;
+#X obj 190 198 cnv 15 240 40 empty empty empty 20 12 0 14 -204786 -66577
+0;
+#X obj 1694 189 cnv 15 240 40 empty empty empty 20 12 0 14 -204800
+-66577 0;
+#X text 1753 199 Tempo Generator;
+#X obj 2434 189 cnv 15 240 40 empty empty empty 20 12 0 14 -261234
+-66577 0;
+#X text 2464 200 Distance to Volume Mapper;
+#X text 2338 280 Maps the distance of the player form an approaching
+wall (a value from 700 to 0) into the amplitude for the alarm sound
+generator (a value from 0 to 1)., f 57;
+#X text 952 200 Click to Open >;
+#X text 213 208 Relative Position Detector;
+#X obj 1969 365 r SetFirstBeepPixels;
+#X obj 1971 419 r SetSecondBeepPixels;
+#X obj 1972 468 r SetThirdBeepPixels;
+#X obj 1970 518 r SetForthBeepPixels;
+#X obj 1969 570 r SetFifthBeepPixels;
+#X obj 2244 633 s WallPixelsAfterAppearance;
+#X obj 1509 330 r WallPixelsAfterAppearance;
+#X text 1462 282 How many pixels the new wall has moved so far in reference
+to its first appearnce point, f 45;
+#X obj -264 1133 YellowLeftAlarm;
+#X obj 3 1131 YellowAlarm;
+#X obj 265 1130 YellowRightAlarm;
+#X obj -366 1255 cnv 15 200 30 empty empty empty 20 12 0 14 -262130
+-66577 0;
+#X obj 167 1261 cnv 15 200 30 empty empty empty 20 12 0 14 -262130
+-66577 0;
+#X obj -110 1259 cnv 15 200 30 empty empty empty 20 12 0 14 -262130
+-66577 0;
+#X obj 441 1268 cnv 15 200 30 empty empty empty 20 12 0 14 -261234
+-66577 0;
+#X text -107 1167 Both alarms Yellow wall, f 12;
+#X text -371 1169 Left alarm Yellow wall, f 11;
+#X text 168 1170 Right alarm Yellow wall, f 12;
+#X msg 2459 1027 0;
+#X obj 2316 1028 s loopFinished;
+#X obj 2214 1028 s turnOff4;
+#X obj 2316 994 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 2214 996 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 2279 927 sel 10;
+#X connect 0 0 2 0;
+#X connect 1 0 3 1;
+#X connect 2 0 5 0;
+#X connect 3 0 4 0;
+#X connect 4 0 22 0;
+#X connect 5 0 11 0;
+#X connect 5 1 9 0;
+#X connect 5 2 10 0;
+#X connect 5 3 12 0;
+#X connect 9 0 3 0;
+#X connect 10 0 3 0;
+#X connect 11 0 3 0;
+#X connect 12 0 3 0;
+#X connect 13 0 2 0;
+#X connect 15 0 24 0;
+#X connect 15 0 101 0;
+#X connect 16 0 25 0;
+#X connect 16 0 102 0;
+#X connect 17 0 27 0;
+#X connect 17 0 103 0;
+#X connect 18 0 26 0;
+#X connect 18 0 43 0;
+#X connect 19 0 20 0;
+#X connect 22 0 15 0;
+#X connect 22 1 16 0;
+#X connect 22 2 17 0;
+#X connect 22 3 18 0;
+#X connect 22 4 18 0;
+#X connect 22 5 19 0;
+#X connect 28 0 35 0;
+#X connect 29 0 33 0;
+#X connect 30 0 42 0;
+#X connect 31 0 39 0;
+#X connect 32 0 38 0;
+#X connect 33 0 34 0;
+#X connect 33 0 56 0;
+#X connect 33 0 98 0;
+#X connect 33 0 116 0;
+#X connect 34 0 28 0;
+#X connect 35 0 48 0;
+#X connect 36 0 111 0;
+#X connect 37 0 40 0;
+#X connect 38 0 29 1;
+#X connect 38 0 41 0;
+#X connect 39 0 29 1;
+#X connect 39 0 41 0;
+#X connect 40 0 29 1;
+#X connect 40 0 41 0;
+#X connect 41 0 54 0;
+#X connect 44 0 47 0;
+#X connect 45 0 44 0;
+#X connect 46 0 1 0;
+#X connect 46 0 13 0;
+#X connect 48 0 36 0;
+#X connect 48 0 114 0;
+#X connect 48 0 115 0;
+#X connect 48 1 30 0;
+#X connect 52 0 55 0;
+#X connect 53 0 54 0;
+#X connect 54 0 29 0;
+#X connect 55 0 34 1;
+#X connect 56 0 36 0;
+#X connect 56 0 114 0;
+#X connect 56 0 115 0;
+#X connect 57 0 75 0;
+#X connect 58 0 59 0;
+#X connect 58 0 63 0;
+#X connect 59 0 58 1;
+#X connect 60 0 61 0;
+#X connect 60 0 62 0;
+#X connect 61 0 57 0;
+#X connect 62 0 57 0;
+#X connect 62 0 64 0;
+#X connect 63 0 60 0;
+#X connect 64 0 84 0;
+#X connect 65 0 84 0;
+#X connect 66 0 84 0;
+#X connect 67 0 84 0;
+#X connect 68 0 84 0;
+#X connect 69 0 84 0;
+#X connect 70 0 65 1;
+#X connect 71 0 66 1;
+#X connect 72 0 67 1;
+#X connect 73 0 68 1;
+#X connect 74 0 69 1;
+#X connect 75 0 77 0;
+#X connect 84 0 58 0;
+#X connect 93 0 70 0;
+#X connect 94 0 71 0;
+#X connect 95 0 72 0;
+#X connect 96 0 73 0;
+#X connect 97 0 74 0;
+#X connect 99 0 65 0;
+#X connect 99 0 66 0;
+#X connect 99 0 67 0;
+#X connect 99 0 68 0;
+#X connect 99 0 69 0;
+#X connect 111 0 42 0;
+#X connect 114 0 112 0;
+#X connect 115 0 113 0;
+#X connect 116 0 115 0;
+#X connect 116 0 114 0;
+#X connect 116 0 36 0;

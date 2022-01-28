@@ -1,0 +1,58 @@
+#N canvas -8 -8 1600 817 12;
+#X obj 117 86 cnv 15 800 800 empty empty empty 20 12 0 14 -262130 -66577
+0;
+#X floatatom 510 242 5 0 0 0 - - -;
+#X floatatom 511 326 5 0 0 0 - - -;
+#X floatatom 517 405 5 0 0 0 - - -;
+#X floatatom 516 482 5 0 0 0 - - -;
+#X floatatom 517 567 5 0 0 0 - - -;
+#X obj 583 241 s SetFirstBeepPixles;
+#X obj 584 325 s SetSecondBeepPixles;
+#X obj 590 404 s SetThirdBeepPixles;
+#X obj 589 481 s SetForthBeepPixles;
+#X obj 590 566 s SetFifthBeepPixles;
+#X msg 423 242 100;
+#X msg 423 324 200;
+#X msg 426 405 300;
+#X msg 428 482 400;
+#X msg 429 570 500;
+#X floatatom 515 784 5 0 0 0 - - -;
+#X text 207 141 Set how many pixels the new wall should move (in reference
+to its first appearnce point) until each beep is played;
+#X msg 427 787 700;
+#X obj 588 783 s WallDistanceThreshold;
+#X text 109 43 Set and Send alarm values from Alarm Moderation Dashbord
+if you want to apply changes to Alarm parameters globally, f 116;
+#X obj 423 212 loadbang;
+#X obj 423 294 loadbang;
+#X obj 426 375 loadbang;
+#X obj 428 451 loadbang;
+#X obj 429 538 loadbang;
+#X obj 427 752 loadbang;
+#X text 220 244 Pixels for the 1st Beep;
+#X text 219 324 Pixels for the 2nd Beep;
+#X text 219 405 Pixels for the 3rd Beep;
+#X text 218 484 Pixels for the 4th Beep;
+#X text 216 570 Pixels for the 5th Beep;
+#X text 217 786 Wall distance in Pixels;
+#X text 211 682 Set from what point (in pixels) the values for the
+WallDistances sould be considered for playing the Alarm sound, f 65
+;
+#X connect 1 0 6 0;
+#X connect 2 0 7 0;
+#X connect 3 0 8 0;
+#X connect 4 0 9 0;
+#X connect 5 0 10 0;
+#X connect 11 0 1 0;
+#X connect 12 0 2 0;
+#X connect 13 0 3 0;
+#X connect 14 0 4 0;
+#X connect 15 0 5 0;
+#X connect 16 0 19 0;
+#X connect 18 0 16 0;
+#X connect 21 0 11 0;
+#X connect 22 0 12 0;
+#X connect 23 0 13 0;
+#X connect 24 0 14 0;
+#X connect 25 0 15 0;
+#X connect 26 0 18 0;

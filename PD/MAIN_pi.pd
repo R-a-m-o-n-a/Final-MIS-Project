@@ -1,0 +1,37 @@
+#N canvas -7 0 798 808 12;
+#X msg 45 266 \; pd dsp \$1;
+#X obj 45 160 tgl 30 0 empty empty empty 17 7 0 10 -162280 -1 -1 0
+1;
+#X obj 57 230 s global_volume_fade;
+#X text 85 164 <-Click to start/stop DSP;
+#X obj 380 221 *~;
+#X obj 380 259 dac~ 1 2, f 15;
+#X obj 570 169 line~;
+#X obj 570 112 r global_volume_fade;
+#X obj 482 220 *~;
+#X obj 40 485 cnv 15 120 60 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X obj 248 485 cnv 15 120 60 empty empty empty 20 12 0 14 -203904 -66577
+0;
+#X obj 293 505 OSC;
+#X obj 445 485 cnv 15 120 60 empty empty empty 20 12 0 14 -204786 -66577
+0;
+#X obj 77 505 teensy;
+#X obj 463 505 sound_engine;
+#X text 373 304 "Catch~" receives sounds from "Throw~" objects in the
+"OSC" and "sound_engine" subpatches.;
+#X obj 379 67 catch~ right;
+#X obj 482 67 catch~ left;
+#X obj 45 18 r startGame;
+#X obj 570 141 pack 0 500;
+#X connect 1 0 0 0;
+#X connect 1 0 2 0;
+#X connect 4 0 5 0;
+#X connect 6 0 4 1;
+#X connect 6 0 8 1;
+#X connect 7 0 19 0;
+#X connect 8 0 5 1;
+#X connect 16 0 4 0;
+#X connect 17 0 8 0;
+#X connect 18 0 1 0;
+#X connect 19 0 6 0;

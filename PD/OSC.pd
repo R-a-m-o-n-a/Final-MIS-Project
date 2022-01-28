@@ -1,0 +1,89 @@
+#N canvas 793 0 798 808 12;
+#X obj 625 107 mrpeach/unpackOSC;
+#X obj 625 83 netreceive -u -b 12000;
+#X floatatom 980 182 5 0 0 0 - - -;
+#X floatatom 1053 182 5 0 0 0 - - -;
+#X obj 1401 216 s wallDistanceLane1;
+#X obj 1546 215 s wallDistanceLane2;
+#X obj 1053 217 s laneChanged;
+#X floatatom 746 179 5 0 0 0 - - -;
+#X obj 746 215 s startGame;
+#X obj 53 295 mrpeach/packOSC;
+#X obj 53 319 cyclone/prepend send;
+#X obj 53 423 netsend -u -b;
+#X obj 53 94 r _dir;
+#X msg 53 221 /changeLane \$1;
+#X msg 106 368 connect 127.0.0.1 32000;
+#X obj 234 326 loadbang;
+#X text 51 41 Sending IMU data to move ball on Processing. Movement
+changes the lane the ball is on. (-1 = left \, 1 = right), f 62;
+#X obj 154 690 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X msg 154 730 /clap;
+#X obj 155 547 adc~;
+#X obj 43 128 cnv 15 60 60 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X floatatom 53 148 5 0 0 0 - - -;
+#X text 617 34 Receiving OSC messages from Processing;
+#X obj 52 731 s jumpSound;
+#X floatatom 1318 179 5 0 0 0 - - -;
+#X floatatom 1154 181 5 0 0 0 - - -;
+#X obj 1318 216 s wallType;
+#X floatatom 1401 179 5 0 0 0 - - -;
+#X floatatom 1546 179 5 0 0 0 - - -;
+#X obj 1689 214 s wallDistanceRed;
+#X floatatom 1689 176 5 0 0 0 - - -;
+#X floatatom 1817 173 5 0 0 0 - - -;
+#X obj 1817 213 s hitWall;
+#X floatatom 834 178 5 0 0 0 - - -;
+#X obj 834 215 s reachedFinishLine;
+#X obj 1154 217 s changeLaneProhibited;
+#X obj 625 130 mrpeach/routeOSC /startGame /reachedFinishLine /frameRateChanged
+/laneChanged /changeLaneProhibited /wallType /wallDistanceLane1 /wallDistanceLane2
+/wallDistanceRed /hitWall, f 187;
+#X text 282 712 Once the sound of a clap received from the microphone
+\, jump sound is played and the signal is sent to Processing to illustrate
+jumping of the ball., f 58;
+#X obj 154 593 bonk~;
+#X msg 215 546 minvel \$1;
+#X obj 218 521 hsl 128 15 0 127 0 0 empty empty threshold_for_detecting_clap
+-2 -8 0 10 -262144 -1 -1 10000 1;
+#X obj 216 444 loadbang;
+#X msg 216 476 100, f 4;
+#X connect 0 0 36 0;
+#X connect 1 0 0 0;
+#X connect 3 0 6 0;
+#X connect 7 0 8 0;
+#X connect 9 0 10 0;
+#X connect 10 0 11 0;
+#X connect 12 0 21 0;
+#X connect 13 0 9 0;
+#X connect 14 0 11 0;
+#X connect 15 0 14 0;
+#X connect 17 0 18 0;
+#X connect 17 0 23 0;
+#X connect 18 0 9 0;
+#X connect 19 0 38 0;
+#X connect 21 0 13 0;
+#X connect 24 0 26 0;
+#X connect 25 0 35 0;
+#X connect 27 0 4 0;
+#X connect 28 0 5 0;
+#X connect 30 0 29 0;
+#X connect 31 0 32 0;
+#X connect 33 0 34 0;
+#X connect 36 0 7 0;
+#X connect 36 1 33 0;
+#X connect 36 2 2 0;
+#X connect 36 3 3 0;
+#X connect 36 4 25 0;
+#X connect 36 5 24 0;
+#X connect 36 6 27 0;
+#X connect 36 7 28 0;
+#X connect 36 8 30 0;
+#X connect 36 9 31 0;
+#X connect 38 0 17 0;
+#X connect 39 0 38 0;
+#X connect 40 0 39 0;
+#X connect 41 0 42 0;
+#X connect 42 0 40 0;
