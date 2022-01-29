@@ -139,6 +139,7 @@ private void startGame() {
   isGameRunning = true;
   stats_startTime = getCurrentTime();
   gameTimer.start();
+  sendOscMessage("/startCountdown", 0);
   sendOscMessage("/startGame", 1);
 }
 
@@ -158,6 +159,7 @@ public void finishedGame() {
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
  * /startGame - 1 if starting, 0 if finished
+ * /startCountdown - 1 if starting, 0 if finished
  * /reachedFinishLine
  */
 void sendOscMessage(String scope, int value) {
