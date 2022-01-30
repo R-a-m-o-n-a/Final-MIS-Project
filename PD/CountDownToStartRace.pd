@@ -10,7 +10,7 @@
 #X obj 324 611 throw~ left;
 #X obj 446 608 throw~ right;
 #X msg 247 86 0;
-#X obj 247 57 loadbang;
+#X obj 184 46 loadbang;
 #X obj 346 482 osc~;
 #X obj 432 479 osc~;
 #X floatatom 345 402 5 0 0 0 - - -;
@@ -45,6 +45,7 @@
 #X msg 286 372 330;
 #X msg 429 370 660;
 #X obj 352 21 r startCountdown;
+#X obj 242 9 r startGame;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 3 0 4 0;
@@ -90,3 +91,4 @@
 #X connect 33 0 24 0;
 #X connect 34 0 14 0;
 #X connect 35 0 28 0;
+#X connect 36 0 9 0;
