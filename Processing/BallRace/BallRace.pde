@@ -139,7 +139,7 @@ private void startGame() {
   isGameRunning = true;
   stats_startTime = getCurrentTime();
   gameTimer.start();
-  sendOscMessage("/startCountdown", 0);
+  //sendOscMessage("/startCountdown", 0);
   sendOscMessage("/startGame", 1);
 }
 
