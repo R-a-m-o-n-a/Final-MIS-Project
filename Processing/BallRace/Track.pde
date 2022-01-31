@@ -1,7 +1,7 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 // track constants
-int TRACK_LENGTH =400; // how many rows in the track array
+int TRACK_LENGTH = 400; // how many rows in the track array
 int TRACK_WIDTH = 1000; // how many pixels the whole track is wide
 int ROW_HEIGHT = 100; // how many pixels each row is high
 int NO_OF_LANES = 4;
