@@ -1,11 +1,13 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 // track constants
-int TRACK_LENGTH = 300; // how many rows in the track array
+int TRACK_LENGTH = 380; // how many rows in the track array
 int TRACK_WIDTH = 1000; // how many pixels the whole track is wide
 int ROW_HEIGHT = 100; // how many pixels each row is high
 int NO_OF_LANES = 4;
 int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
+int wallPlacementTrials = 0; // for the wall placement, an indication of how many times the calculation restarted
+/* the wall placement may not be done in the very best way. I might change it in a way that walls are placed subsequently along the track, in a range of minDistance to maxDistance from the last wall, instead of completely randomly */
 
 // wall parameters
 int NO_OF_WALLS = 30;
@@ -126,8 +128,19 @@ public class Track {
     IntList wallRows = new IntList();
     for (int w = 0; w < NO_OF_WALLS; w++) { // places one wall after the other until specified number is reached
       int randomRow = generateRandomRowNumber(); // picks a random row
+      int loopCount = 0; // use the loopCount to send messages if the wall placement would lead to an endless loop
       while (!randomNumberOk(randomRow, wallRows)) { // checks if the wall can be placed here (if there are no walls already close). generates new row until the placement can be carried out
+        loopCount++;
         randomRow = generateRandomRowNumber();
+        if(loopCount == 1000) {
+          println("Problems placing wall no. " + w);
+        }
+        if(loopCount == 3000) {
+          println("Retrying. If this message shows up too many times (like more than 5000), change the no. of walls, distance between them, or track length! This is no. " + wallPlacementTrials++);
+          track = new int[TRACK_LENGTH][NO_OF_LANES];
+          wallRows = new IntList();
+          w = 0;
+        }
       }
       // we add the remaining walls to a list because we want to place them on alternating lanes. the easiest way for this is to sort the list and then alternate
       wallRows.append(randomRow);
