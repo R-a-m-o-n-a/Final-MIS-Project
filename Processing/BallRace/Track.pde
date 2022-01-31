@@ -1,7 +1,7 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 // track constants
-int TRACK_LENGTH = 380; // how many rows in the track array
+int TRACK_LENGTH =400; // how many rows in the track array
 int TRACK_WIDTH = 1000; // how many pixels the whole track is wide
 int ROW_HEIGHT = 100; // how many pixels each row is high
 int NO_OF_LANES = 4;
@@ -14,10 +14,10 @@ int NO_OF_WALLS = 30;
 int MIN_DISTANCE_BETWEEN_WALLS = 10;
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
-int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 3);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
+int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 4);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
 int MAX_CONSECUTIVE_WALLS_ON_ONE_LANE = 2;
 int CHANGING_AFTER_WALL_ALLOWANCE = 15; // for explanantion see function isAnyPartOfTheBallOnAWall()
-int THRESHOLD_FOR_SENDING_WALL_DISTANCE = 500;
+int THRESHOLD_FOR_SENDING_WALL_DISTANCE = 700;
 
 // colors
 color GRAVEL_COLOR = color(53,51,50);
