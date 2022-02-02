@@ -96,7 +96,7 @@ void keyPressed() {
 
 private void startCountdown() {
   isCountdownRunning = true;
-  sendOscMessage("/startCountdown", 1);
+  sendOscMessage("/startCountdown", USING_VISUAL_MODE ? 0 : 1);
 }
 
 private void displayCountdown() {
@@ -143,7 +143,7 @@ private void startGame() {
   stats_startTime = getCurrentTime();
   gameTimer.start();
   // sendOscMessage("/startCountdown", 0);
-  sendOscMessage("/startGame", 1);
+  sendOscMessage("/startGame", USING_VISUAL_MODE ? 0 : 1);
 }
 
 public void finishedGame() {
