@@ -12,6 +12,8 @@ int wallPlacementTrials = 0; // for the wall placement, an indication of how man
 // wall parameters
 int NO_OF_WALLS = 30;
 int MIN_DISTANCE_BETWEEN_WALLS = 10;
+int MAX_DISTANCE_BETWEEN_WALLS = 15;
+int FIRST_WALL_ROW = 7;
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
 int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 4);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
@@ -123,8 +125,65 @@ public class Track {
    * 0 - empty field, no wall
    * 1 - normal wall that spans over one lane only (plus the adjacent gravel lane)
    * 2 - big wall that spans over all lanes and can not be avoided by changing lane
-   */
+   */  
   public void fillTrackWithWalls() {
+    int normalWallCount = 0;
+    int bigWallCount = 0;
+    IntList wallRows = new IntList();
+    int wallRow = FIRST_WALL_ROW;
+    while (wallRow < TRACK_LENGTH) {
+     wallRows.append(wallRow);
+    // generate random distance to the next wall
+    int distance = generateRandomNumber(MIN_DISTANCE_BETWEEN_WALLS, MAX_DISTANCE_BETWEEN_WALLS);
+   
+     wallRow += distance;
+    }
+    wallRows.sort();
+    int prevLane = 2;
+    int prevLaneCount = 0;
+    for(int i = 0; i < wallRows.size(); i++) { // add walls to each previously picked row
+      int row = wallRows.get(i);
+      
+      if(makeBigWall()) { // calculates whether a wall should be a big wall based on the probability specified
+        for(int lane = 0; lane < NO_OF_LANES; lane++) { // spread wall over all lanes
+          track[row][lane] = 2;
+        }
+        bigWallCount++;
+      } else { // place wall on random lane
+        normalWallCount++;
+        int randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
+        
+        // the following code makes sure that not more than MAX_CONSECUTIVE_WALLS_ON_ONE_LANE walls are placed on one single lane
+        if(randomLane == prevLane) {
+          if(prevLaneCount >= MAX_CONSECUTIVE_WALLS_ON_ONE_LANE) {
+            while(randomLane == prevLane) {
+              randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
+            }
+            prevLane = randomLane;
+            prevLaneCount = 1;
+          } else {
+            prevLaneCount++;
+          }
+        } else {
+          prevLane = randomLane;
+          prevLaneCount = 1;
+        }
+        
+        track[row][randomLane] = 1; // set the wall on the calculated position            
+        
+        // also add wall to adjacent gravel lane so it can't be avoided by going there
+        if(randomLane == 1) {
+          track[row][0] = 1;
+        } 
+        if(randomLane == NO_OF_LANES - 2) {
+          track[row][NO_OF_LANES - 1] = 1;
+        }
+      }
+    }      
+    println("placed " + (normalWallCount+bigWallCount) + " walls: " + normalWallCount + " yellow walls and " + bigWallCount + " red walls.");
+  }
+   
+  public void fillTrackWithWallsOld() {
     IntList wallRows = new IntList();
     for (int w = 0; w < NO_OF_WALLS; w++) { // places one wall after the other until specified number is reached
       int randomRow = generateRandomRowNumber(); // picks a random row
