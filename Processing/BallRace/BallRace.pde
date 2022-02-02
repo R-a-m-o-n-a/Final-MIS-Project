@@ -1,6 +1,7 @@
 import controlP5.*; 
 import oscP5.*;
 import netP5.*;
+
 // Variables for communication via OSC messages
 OscP5 oscP5;
 NetAddress PD_Location;
@@ -10,8 +11,8 @@ int SENDING_PORT = 12000;
 
 // variables for the game itself
 Track track;
-boolean isCountdownRunning = false;
 int countdown = 8;
+boolean isCountdownRunning = false;
 boolean isGameRunning = false;
 
 // variables for statistics
@@ -44,9 +45,11 @@ void setup(){
   oscP5.plug(this,"receiveChangeLane","/changeLane");   
   oscP5.plug(this,"receiveClap","/clap");   
   
+  // load images
   infoIcon = loadImage("info.png");
   speechBubble = loadImage("speech_bubble.png");
     
+  // create track
   track = new Track();
   noStroke(); // don't draw border on shapes
 }
@@ -56,12 +59,12 @@ void draw() {
   background(0, 0, 0); 
   
   if(isGameRunning) { 
-    track.drive();
+    track.drive(); // moves the track
   } 
   
   track.draw();
   
-  if(!isGameRunning && !stats_successfullyFinished) {
+  if(!isGameRunning && !stats_successfullyFinished) { // before the game
     if(isCountdownRunning) {
       displayCountdown();
     } else {
@@ -76,7 +79,7 @@ void draw() {
   }
 }
 
-// alternative key controls for testing
+// key controls (keys a and d are alternative lane changing controls for testing, the space bar starts the game)
 void keyPressed() {
   if (key == 'a') {
     track.moveBall(-1);
@@ -139,7 +142,7 @@ private void startGame() {
   isGameRunning = true;
   stats_startTime = getCurrentTime();
   gameTimer.start();
-  //sendOscMessage("/startCountdown", 0);
+  // sendOscMessage("/startCountdown", 0);
   sendOscMessage("/startGame", 1);
 }
 
@@ -159,14 +162,14 @@ public void finishedGame() {
  * /wallDistanceLaneN - sends a message for lane N (for each middle lane) the value is the amount of pixels until a wall is hit on that lane
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
  * /startGame - 1 if starting, 0 if finished
- * /startCountdown - 1 if starting, 0 if finished
+ * /startCountdown - 1 at countdown start
  * /reachedFinishLine
  */
 void sendOscMessage(String scope, int value) {
   OscMessage message = new OscMessage(scope);
   message.add(value);
   oscP5.send(message, PD_Location);
-  println("OSCmessagesent " + scope + " " + value);
+  println("OSCmessage " + scope + " " + value);
 }
 
 // method to handle the change lane when the OSC message /changeLane is received
@@ -181,10 +184,6 @@ void receiveClap() {
   track.jump(); 
 }
 
-void stop() {
-  println("STOP");
-}
-
 private void publishStats() {
   frozenTimer.stop();
   gravelTimer.stop();
@@ -194,7 +193,6 @@ private void publishStats() {
   stats_timeSpentOnGravel = gravelTimer.getTotal();
   stats_timeSpentFrozen = frozenTimer.getTotal();
     
-
   String timestamp = fixTime(hour()) + fixTime(minute()) + fixTime(second());
  
   stats_json = new JSONObject();

@@ -6,20 +6,17 @@ int TRACK_WIDTH = 1000; // how many pixels the whole track is wide
 int ROW_HEIGHT = 100; // how many pixels each row is high
 int NO_OF_LANES = 4;
 int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
-int wallPlacementTrials = 0; // for the wall placement, an indication of how many times the calculation restarted
-/* the wall placement may not be done in the very best way. I might change it in a way that walls are placed subsequently along the track, in a range of minDistance to maxDistance from the last wall, instead of completely randomly */
 
 // wall parameters
-int NO_OF_WALLS = 30;
 int MIN_DISTANCE_BETWEEN_WALLS = 10;
 int MAX_DISTANCE_BETWEEN_WALLS = 15;
 int FIRST_WALL_ROW = 7;
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
 int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 4);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
-int MAX_CONSECUTIVE_WALLS_ON_ONE_LANE = 2;
+int MAX_CONSECUTIVE_WALLS_ON_ONE_LANE = 2; // there can be only this many consecutive walls on the same lane
 int CHANGING_AFTER_WALL_ALLOWANCE = 15; // for explanantion see function isAnyPartOfTheBallOnAWall()
-int THRESHOLD_FOR_SENDING_WALL_DISTANCE = 700;
+int THRESHOLD_FOR_SENDING_WALL_DISTANCE = 700; // no of pixels in front of wall when the alarm sound starts. needs to be the same value as in PD
 
 // colors
 color GRAVEL_COLOR = color(53,51,50);
@@ -131,7 +128,7 @@ public class Track {
     int bigWallCount = 0;
     IntList wallRows = new IntList();
     int wallRow = FIRST_WALL_ROW;
-    while (wallRow < TRACK_LENGTH) {
+    while (wallRow < TRACK_LENGTH-4) {
      wallRows.append(wallRow);
     // generate random distance to the next wall
     int distance = generateRandomNumber(MIN_DISTANCE_BETWEEN_WALLS, MAX_DISTANCE_BETWEEN_WALLS);
@@ -183,70 +180,6 @@ public class Track {
     println("placed " + (normalWallCount+bigWallCount) + " walls: " + normalWallCount + " yellow walls and " + bigWallCount + " red walls.");
   }
    
-  public void fillTrackWithWallsOld() {
-    IntList wallRows = new IntList();
-    for (int w = 0; w < NO_OF_WALLS; w++) { // places one wall after the other until specified number is reached
-      int randomRow = generateRandomRowNumber(); // picks a random row
-      int loopCount = 0; // use the loopCount to send messages if the wall placement would lead to an endless loop
-      while (!randomNumberOk(randomRow, wallRows)) { // checks if the wall can be placed here (if there are no walls already close). generates new row until the placement can be carried out
-        loopCount++;
-        randomRow = generateRandomRowNumber();
-        if(loopCount == 1000) {
-          println("Problems placing wall no. " + w);
-        }
-        if(loopCount == 3000) {
-          println("Retrying. If this message shows up too many times (like more than 5000), change the no. of walls, distance between them, or track length! This is no. " + wallPlacementTrials++);
-          track = new int[TRACK_LENGTH][NO_OF_LANES];
-          wallRows = new IntList();
-          w = 0;
-        }
-      }
-      // we add the remaining walls to a list because we want to place them on alternating lanes. the easiest way for this is to sort the list and then alternate
-      wallRows.append(randomRow);
-    }
-    wallRows.sort();
-    int prevLane = 2;
-    int prevLaneCount = 0;
-    for(int i = 0; i < wallRows.size(); i++) { // add normal walls to each previously picked row
-      int row = wallRows.get(i);
-      
-      if(makeBigWall()) { // calculates whether a wall should be a big wall based on the probability specified
-        for(int lane = 0; lane < NO_OF_LANES; lane++) { // spread wall over all lanes
-          track[row][lane] = 2;
-        }
-      } else { // place wall on random lane
-        int randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
-        
-        // the following code makes sure that not more than MAX_CONSECUTIVE_WALLS_ON_ONE_LANE walls are placed on one single lane
-        if(randomLane == prevLane) {
-          if(prevLaneCount >= MAX_CONSECUTIVE_WALLS_ON_ONE_LANE) {
-            while(randomLane == prevLane) {
-              //println("recalculating because max on lane " + prevLane + " and row " + row);
-              randomLane = generateRandomNumber(1, NO_OF_LANES - 2);
-            }
-            prevLane = randomLane;
-            prevLaneCount = 1;
-          } else {
-            prevLaneCount++;
-          }
-        } else {
-          prevLane = randomLane;
-          prevLaneCount = 1;
-        }
-        
-        track[row][randomLane] = 1; // set the wall on the calculated position            
-        
-         // also add wall to adjacent gravel lane so it can't be avoided by going there
-        if(randomLane == 1) {
-          track[row][0] = 1;
-        } 
-        if(randomLane == NO_OF_LANES - 2) {
-          track[row][NO_OF_LANES - 1] = 1;
-        }
-      }
-    }      
-  }
-
   /* function that determines the fill color of the rectangles that make up the track */
   public color getFillColor(int row, int lane) {
     color fillColor;
@@ -294,24 +227,12 @@ public class Track {
     }
   }
 
-  public boolean randomNumberOk(int r, IntList wallRows) { // checks whether there is no wall in this line or the lines before or after yet → ensures that the player is able to change lanes in order to avoid normal walls
-    boolean surroundingRowsFree = true;
-    for(int d = 0; d < MIN_DISTANCE_BETWEEN_WALLS+1; d++) {
-      if(wallRows.hasValue(r+d) || wallRows.hasValue(r-d)) surroundingRowsFree = false;
-    }
-    return surroundingRowsFree;
-  }
-
   public int generateRandomNumber(int min, int max) {
     return ThreadLocalRandom.current().nextInt(min, max + 1);
   }
 
   public boolean makeBigWall() { // calculates whether a wall should be a big wall based on the probability specified
     return generateRandomNumber(0, 100) < PERCENTAGE_OF_BIG_WALLS;
-  }
-
-  public int generateRandomRowNumber() {
-    return generateRandomNumber(7, TRACK_LENGTH-6);
   }
 
   public void moveBall(int dir) { // tries to change lane, if not allowed will not change

@@ -9,10 +9,10 @@ public class Ball {
   int laneWidth;
   int laneHeight;
   int noOfLanes;
-  int ballSize; // diameter of the ball
-  int originalBallSize; // diameter of the ball - keep in case we change the ball size (for jumping for example)
+  int ballSize; // current diameter of the ball
+  int originalBallSize; // diameter of the ball - saved in case we change the ball size (for jumping for example)
   int changingLaneOffset; // this value regulates gradually chaging lanes, it is added to the xPos in draw and adjusted so that it becomes 0 again after the change is finished
-  float offsetRecoveryRate;// determines how fast the changingLaneOffset shrinks. Differs if ball has been on gravel or not
+  float offsetRecoveryRate; // determines how fast the changingLaneOffset shrinks. Differs if ball has been on gravel or not
   boolean isSpeedingUp = false;
   boolean isSlowingDown = false;
 
@@ -25,11 +25,11 @@ public class Ball {
     this.laneHeight = laneHeight;
   }
 
-  public void move(int dir, boolean wouldCauseCollision) { // returns whether ball is on gravel or not
+  public void move(int dir, boolean wouldCauseCollision) {
     boolean wasBallOnGravel = (lane==0 || lane == noOfLanes-1);
 
     /* change is allowed when
-     ball does not go off track with this change &&   not next to wall   &&  not already changing lane  && not currently jumping       */
+     *ball does not go off track with this change &&   not next to wall   &&  not already changing lane  &&   not currently jumping       */
     if (lane + dir >= 0 && lane + dir < noOfLanes && !wouldCauseCollision && abs(changingLaneOffset) < 5 && ballSize == originalBallSize) {
       if (wasBallOnGravel) {
         offsetRecoveryRate = GRAVEL_OFFSET_RECOVERY_RATE;
