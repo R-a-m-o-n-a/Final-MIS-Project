@@ -1,13 +1,13 @@
-#N canvas -8 -8 1536 781 12;
+#N canvas -8 -8 1600 817 12;
 #X obj 625 107 mrpeach/unpackOSC;
 #X obj 625 83 netreceive -u -b 12000;
-#X floatatom 980 182 5 0 0 0 - - -;
-#X floatatom 1096 179 5 0 0 0 - - -;
+#X floatatom 970 182 5 0 0 0 - - -;
+#X floatatom 1094 179 5 0 0 0 - - -;
 #X obj 1444 213 s wallDistanceLane1;
 #X obj 1589 212 s wallDistanceLane2;
-#X obj 1096 214 s laneChanged;
-#X floatatom 746 179 5 0 0 0 - - -;
-#X obj 746 215 s startGame;
+#X obj 1094 214 s laneChanged;
+#X floatatom 736 179 5 0 0 0 - - -;
+#X obj 736 215 s startGame;
 #X obj 53 295 mrpeach/packOSC;
 #X obj 53 319 cyclone/prepend send;
 #X obj 53 423 netsend -u -b;
@@ -35,8 +35,8 @@ changes the lane the ball is on. (-1 = left \, 1 = right), f 62;
 #X floatatom 1732 173 5 0 0 0 - - -;
 #X floatatom 1860 170 5 0 0 0 - - -;
 #X obj 1860 210 s hitWall;
-#X floatatom 834 178 5 0 0 0 - - -;
-#X obj 834 215 s reachedFinishLine;
+#X floatatom 824 178 5 0 0 0 - - -;
+#X obj 824 215 s reachedFinishLine;
 #X obj 1197 214 s changeLaneProhibited;
 #X text 282 712 Once the sound of a clap received from the microphone
 \, jump sound is played and the signal is sent to Processing to illustrate
@@ -47,7 +47,7 @@ jumping of the ball., f 58;
 -2 -8 0 10 -262144 -1 -1 10000 1;
 #X obj 216 444 loadbang;
 #X msg 216 476 100, f 4;
-#X obj 980 255 s startCountdown;
+#X obj 970 214 s startCountdown;
 #X obj 625 130 mrpeach/routeOSC /startGame /reachedFinishLine /startCountdown
 /laneChanged /changeLaneProhibited /wallType /wallDistanceLane1 /wallDistanceLane2
 /wallDistanceRed /hitWall /visualMode, f 187;
