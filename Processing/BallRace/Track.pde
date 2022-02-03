@@ -280,8 +280,6 @@ public class Track {
       positionOfNextWall = positionOfNextWallLane2;
     }
     
-    //println(wallPositionsWarnedAbout.size() + " "+ positionOfNextWall + " " + wallPositionsWarnedAbout.hasValue(positionOfNextWall));
-    
     if(positionOfNextWall == 99999) { // no more walls. Just leave the function.
       return;
     } else { // only send OSC message when wall is first spotted. Only once for each wall

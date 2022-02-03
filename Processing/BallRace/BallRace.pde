@@ -16,7 +16,7 @@ boolean isGameRunning = false;
 
 // variables for statistics
 String USER_NAME = "SoundTest"; // fill in participant name here
-boolean USING_VISUAL_MODE = true; // true for visual, false for auditory
+boolean USING_VISUAL_MODE = true; // true for visual, false for auditory/haptic mode
 String COMMENT = ""; // optional
 Timer gravelTimer = new Timer();
 Timer frozenTimer = new Timer();
@@ -96,6 +96,9 @@ void keyPressed() {
 private void startCountdown() {
   isCountdownRunning = true;
   sendOscMessage("/startCountdown", USING_VISUAL_MODE ? 0 : 1);
+  if(USING_VISUAL_MODE) {
+    sendOscMessage("/visualMode", 0);
+  }
 }
 
 private void displayCountdown() {
@@ -162,6 +165,7 @@ public void finishedGame() {
  * /wallType - sends the lane (1 or 2) if the wall approaching is a yellow wall and 5 for the red walls (that are jumpable)
  * /startGame - 1 if starting, 0 if finished
  * /startCountdown - 1 at countdown start
+ * /visualMode - sends a 0 to turn off the sound engine in visual only mode
  * /reachedFinishLine
  */
 void sendOscMessage(String scope, int value) {
