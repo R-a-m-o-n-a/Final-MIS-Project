@@ -145,7 +145,7 @@ private void startGame() {
   stats_startTime = getCurrentTime();
   gameTimer.start();
   // sendOscMessage("/startCountdown", 0);
-  sendOscMessage("/startGame", USING_VISUAL_MODE ? 0 : 1);
+  sendOscMessage("/startGame", 1);
 }
 
 public void finishedGame() {
