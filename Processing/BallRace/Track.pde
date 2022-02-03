@@ -10,7 +10,7 @@ int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom w
 // wall parameters
 int MIN_DISTANCE_BETWEEN_WALLS = 10;
 int MAX_DISTANCE_BETWEEN_WALLS = 15;
-int FIRST_WALL_ROW = 7;
+int FIRST_WALL_ROW = 10;
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
 int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 4);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
