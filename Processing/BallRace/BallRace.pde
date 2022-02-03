@@ -146,6 +146,9 @@ private void startGame() {
   gameTimer.start();
   // sendOscMessage("/startCountdown", 0);
   sendOscMessage("/startGame", 1);
+  if(USING_VISUAL_MODE) {
+    sendOscMessage("/visualMode", 0);
+  }
 }
 
 public void finishedGame() {
