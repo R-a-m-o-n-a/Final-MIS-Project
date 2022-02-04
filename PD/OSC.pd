@@ -1,4 +1,4 @@
-#N canvas -8 -8 1600 817 12;
+#N canvas -8 -8 1536 781 12;
 #X obj 625 107 mrpeach/unpackOSC;
 #X obj 625 83 netreceive -u -b 12000;
 #X floatatom 970 182 5 0 0 0 - - -;
@@ -20,11 +20,9 @@ changes the lane the ball is on. (-1 = left \, 1 = right), f 62;
 #X obj 154 690 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X msg 154 730 /clap;
-#X obj 155 547 adc~;
 #X obj 43 128 cnv 15 60 60 empty empty empty 20 12 0 14 -261682 -66577
 0;
 #X floatatom 53 148 5 0 0 0 - - -;
-#X text 617 34 Receiving OSC messages from Processing;
 #X obj 52 731 s jumpSound;
 #X floatatom 1361 176 5 0 0 0 - - -;
 #X floatatom 1197 178 5 0 0 0 - - -;
@@ -38,58 +36,65 @@ changes the lane the ball is on. (-1 = left \, 1 = right), f 62;
 #X floatatom 824 178 5 0 0 0 - - -;
 #X obj 824 215 s reachedFinishLine;
 #X obj 1197 214 s changeLaneProhibited;
-#X text 282 712 Once the sound of a clap received from the microphone
-\, jump sound is played and the signal is sent to Processing to illustrate
-jumping of the ball., f 58;
-#X obj 154 593 bonk~;
-#X msg 215 546 minvel \$1;
-#X obj 218 521 hsl 128 15 0 127 0 0 empty empty threshold_for_detecting_clap
--2 -8 0 10 -262144 -1 -1 10000 1;
-#X obj 216 444 loadbang;
-#X msg 216 476 100, f 4;
 #X obj 970 214 s startCountdown;
 #X obj 625 130 mrpeach/routeOSC /startGame /reachedFinishLine /startCountdown
 /laneChanged /changeLaneProhibited /wallType /wallDistanceLane1 /wallDistanceLane2
 /wallDistanceRed /hitWall /visualMode, f 187;
 #X floatatom 1935 173 5 0 0 0 - - -;
 #X obj 1935 210 s visualMode;
-#X connect 0 0 43 0;
+#X text 282 712 Once the sound of a clap is received from the microphone
+\, jump sound is played and the signal is sent to Processing to trigger
+jumping of the ball., f 58;
+#X obj 147 457 cnv 15 250 200 empty empty empty 20 12 0 14 -262130
+-66577 0;
+#X obj 155 567 adc~;
+#X obj 154 613 bonk~;
+#X msg 215 566 minvel \$1;
+#X obj 218 541 hsl 128 15 0 127 0 0 empty empty threshold_for_detecting_clap
+-2 -8 0 10 -261234 -1 -1 10000 1;
+#X obj 216 464 loadbang;
+#X msg 216 496 100, f 4;
+#X text 617 34 Receiving OSC messages from Processing and sending them
+to Sound Engine, f 72;
+#X obj 623 241 cnv 15 1500 20 empty empty empty 20 12 0 14 -203904
+-66577 0;
+#X connect 0 0 35 0;
 #X connect 1 0 0 0;
-#X connect 2 0 42 0;
+#X connect 2 0 34 0;
 #X connect 3 0 6 0;
 #X connect 7 0 8 0;
 #X connect 9 0 10 0;
 #X connect 10 0 11 0;
-#X connect 12 0 21 0;
+#X connect 12 0 20 0;
 #X connect 13 0 9 0;
 #X connect 14 0 11 0;
 #X connect 15 0 14 0;
 #X connect 17 0 18 0;
-#X connect 17 0 23 0;
+#X connect 17 0 21 0;
 #X connect 18 0 9 0;
-#X connect 19 0 37 0;
-#X connect 21 0 13 0;
-#X connect 24 0 26 0;
-#X connect 25 0 35 0;
-#X connect 27 0 4 0;
-#X connect 28 0 5 0;
-#X connect 30 0 29 0;
+#X connect 20 0 13 0;
+#X connect 22 0 24 0;
+#X connect 23 0 33 0;
+#X connect 25 0 4 0;
+#X connect 26 0 5 0;
+#X connect 28 0 27 0;
+#X connect 29 0 30 0;
 #X connect 31 0 32 0;
-#X connect 33 0 34 0;
-#X connect 37 0 17 0;
-#X connect 38 0 37 0;
-#X connect 39 0 38 0;
+#X connect 35 0 7 0;
+#X connect 35 1 31 0;
+#X connect 35 2 2 0;
+#X connect 35 3 3 0;
+#X connect 35 4 23 0;
+#X connect 35 5 22 0;
+#X connect 35 6 25 0;
+#X connect 35 7 26 0;
+#X connect 35 8 28 0;
+#X connect 35 9 29 0;
+#X connect 35 10 36 0;
+#X connect 36 0 37 0;
 #X connect 40 0 41 0;
-#X connect 41 0 39 0;
-#X connect 43 0 7 0;
-#X connect 43 1 33 0;
-#X connect 43 2 2 0;
-#X connect 43 3 3 0;
-#X connect 43 4 25 0;
-#X connect 43 5 24 0;
-#X connect 43 6 27 0;
-#X connect 43 7 28 0;
-#X connect 43 8 30 0;
-#X connect 43 9 31 0;
-#X connect 43 10 44 0;
+#X connect 41 0 17 0;
+#X connect 42 0 41 0;
+#X connect 43 0 42 0;
 #X connect 44 0 45 0;
+#X connect 45 0 43 0;

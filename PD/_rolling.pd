@@ -1,4 +1,4 @@
-#N canvas 675 89 1536 781 10;
+#N canvas -6 69 1536 781 10;
 #X text 310 629 Args: object ID;
 #X text 754 629 Args: object ID \, n. of modes \, n. of pickups;
 #X text 465 439 Args: 1st obj ID \, 2nd obj ID \, n. of outlets;
@@ -6,24 +6,24 @@
 SOb - soundobject.org \; Project CLOSED - closed.ircam.fr \; Project
 NIW - soundobject.org/niw \; Project SkAT-VG - skatvg.eu;
 #X obj 392 107 vsl 15 128 1e-005 1 1 0 empty grain empty 0 -9 0 10
--262144 -1 -1 8396 1;
+-262144 -1 -1 0 1;
 #X obj 504 107 vsl 15 128 0 200 0 0 empty depth empty 0 -9 0 10 -262144
--1 -1 10998 1;
+-1 -1 0 1;
 #X obj 263 106 vsl 15 128 0 10 0 0 empty velocity empty 0 -9 0 10 -262144
--1 -1 1500 1;
+-1 -1 0 1;
 #X floatatom 504 243 5 0 0 0 - - -;
 #X floatatom 392 243 6 0 0 0 - - -;
 #X floatatom 263 243 5 0 0 0 - - -;
 #X obj 681 183 select 1;
 #X obj 491 468 vsl 30 64 1000 100000 0 0 empty gain empty 0 -9 0 10
--262144 -1 -1 445 1;
+-262144 -1 -1 0 1;
 #X obj 263 384 rolling~;
 #X obj 304 411 r ro;
 #X msg 175 263 mass \$1;
 #X obj 195 601 r hammerro;
 #X obj 614 602 r objectro;
 #X obj 175 107 vsl 15 128 0.001 1 0 0 empty mass empty 0 -9 0 10 -262144
--1 -1 89 1;
+-1 -1 0 1;
 #X floatatom 175 244 5 0 0 0 - - -;
 #X msg 263 262 velocity \$1;
 #X text 133 69 Rolling mass (Kg) and velocity (m/s);
@@ -46,8 +46,6 @@ to form a rolling sound, f 77;
 #X obj 1063 180 select 3;
 #X obj 1124 179 select 0;
 #X obj 758 183 select 2;
-#X obj 920 23 cnv 15 120 40 empty empty empty 20 12 0 14 -203904 -66577
-0;
 #X obj 936 34 r laneChanged;
 #X text 1263 297 <- different lanes generate different rolling sounds
 ;
@@ -69,13 +67,15 @@ contact1 0 \; mass 0.008 \; velocity 3 \; grain 0.0021 \; depth 173.2
 #X obj 529 668 throw~ right;
 #X obj 34 93 switch~;
 #X floatatom 681 139 5 0 0 0 - - -;
+#X obj 1023 30 cnv 15 15 30 empty empty empty 20 12 0 14 -203904 -66577
+0;
 #X connect 4 0 8 0;
 #X connect 5 0 7 0;
 #X connect 6 0 9 0;
 #X connect 7 0 23 0;
 #X connect 8 0 21 0;
 #X connect 9 0 19 0;
-#X connect 10 0 41 0;
+#X connect 10 0 40 0;
 #X connect 11 0 27 1;
 #X connect 12 0 28 0;
 #X connect 13 0 28 0;
@@ -88,22 +88,22 @@ contact1 0 \; mass 0.008 \; velocity 3 \; grain 0.0021 \; depth 173.2
 #X connect 19 0 12 0;
 #X connect 21 0 12 0;
 #X connect 23 0 12 0;
-#X connect 25 0 43 0;
+#X connect 25 0 42 0;
 #X connect 26 0 29 0;
+#X connect 27 0 44 0;
 #X connect 27 0 45 0;
-#X connect 27 0 46 0;
 #X connect 28 1 27 0;
+#X connect 32 0 46 0;
 #X connect 32 0 47 0;
-#X connect 32 0 48 0;
 #X connect 33 0 32 0;
 #X connect 34 0 35 0;
 #X connect 34 0 36 0;
 #X connect 34 0 10 0;
 #X connect 34 0 37 0;
-#X connect 35 0 42 0;
-#X connect 36 0 42 0;
-#X connect 37 0 41 0;
-#X connect 39 0 34 0;
-#X connect 43 0 44 0;
-#X connect 44 0 12 0;
-#X connect 48 0 10 0;
+#X connect 35 0 41 0;
+#X connect 36 0 41 0;
+#X connect 37 0 40 0;
+#X connect 38 0 34 0;
+#X connect 42 0 43 0;
+#X connect 43 0 12 0;
+#X connect 47 0 10 0;

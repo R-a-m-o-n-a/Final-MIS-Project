@@ -13,6 +13,8 @@
 ;
 #X obj 31 23 inlet;
 #X obj 31 94 switch~;
+#X obj 260 47 cnv 15 15 30 empty empty empty 20 12 0 14 -203904 -66577
+0;
 #X connect 0 0 3 0;
 #X connect 1 0 4 0;
 #X connect 2 0 5 0;
