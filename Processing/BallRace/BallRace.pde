@@ -31,7 +31,9 @@ JSONObject stats_json;
 boolean statsPublished = false; // they get published when the game ends. also if the window gets closed before, but not if the window gets closed after and they have already been published
 
 // images to display info text
-PImage infoIcon, speechBubble;
+PImage infoIcon, speechBubble, fireworks;
+int winningTextSize = 150;
+int winningTextFactor = 3;
 
 void setup(){
   size(1500, 800);
@@ -47,6 +49,7 @@ void setup(){
   // load images
   infoIcon = loadImage("info.png");
   speechBubble = loadImage("speech_bubble.png");
+  fireworks = loadImage("fireworks.png");
     
   // create track
   track = new Track();
@@ -67,14 +70,12 @@ void draw() {
     if(isCountdownRunning) {
       displayCountdown();
     } else {
-      image(speechBubble, width-400, height-300, 370, 270);
-      image(infoIcon, width-365, height-270, 60, 60);
-      fill(color(0,0,0));
-      textAlign(RIGHT);
-      textSize(45);
-      textLeading(50);
-      text("press\nspace bar\nto start", width-360, height-270, 250, 250);
+      displayStartInfos();
     }
+  }
+  
+  if(stats_successfullyFinished) {
+    displayWinningText();
   }
 }
 
@@ -99,6 +100,16 @@ private void startCountdown() {
   if(USING_VISUAL_MODE) {
     sendOscMessage("/visualMode", 0);
   }
+}
+
+private void displayStartInfos() {
+  image(speechBubble, width-400, height-300, 370, 270);
+  image(infoIcon, width-365, height-270, 60, 60);
+  fill(color(0,0,0));
+  textAlign(RIGHT);
+  textSize(45);
+  textLeading(50);
+  text("press\nspace bar\nto start", width-360, height-270, 250, 250);
 }
 
 private void displayCountdown() {
@@ -138,6 +149,22 @@ private void displayCountdown() {
       text(text, width/2, height/2);
     }
     countdown--;
+}
+
+private void displayWinningText() { // display "YOU WON!" animation
+  image(fireworks, width/2-300, height/2-292, 600, 584);
+  String finishText = "YOU WON!";
+  textAlign(CENTER);
+  textSize(winningTextSize);
+  translate(width/2,height/2);    
+  fill(color(0,0,0));
+  text(finishText,5,5);
+  fill(color(255,255,255));
+  text(finishText,0,0);
+  winningTextSize += winningTextFactor;
+  if(winningTextSize>170 || winningTextSize < 150) {
+    winningTextFactor*= -1;
+  }
 }
 
 private void startGame() {
