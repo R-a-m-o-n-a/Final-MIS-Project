@@ -96,12 +96,8 @@ void keyPressed() {
 
 private void startCountdown() {
   isCountdownRunning = true;
-  sendOscMessage("/startCountdown", USING_VISUAL_MODE ? 0 : 1);
-  if(USING_VISUAL_MODE) {
-    sendOscMessage("/visualMode", 0);
-  } else {
-    sendOscMessage("/visualMode", 1);
-}
+  sendOscMessage("/startCountdown", 1);
+  sendOscMessage("/visualMode", USING_VISUAL_MODE ? 0 : 1);
 }
 
 private void displayStartInfos() {
@@ -175,11 +171,7 @@ private void startGame() {
   gameTimer.start();
   // sendOscMessage("/startCountdown", 0);
   sendOscMessage("/startGame", 1);
-  if(USING_VISUAL_MODE) {
-    sendOscMessage("/visualMode", 0);
-  } else {
-     sendOscMessage("/visualMode", 1);
-}
+  sendOscMessage("/visualMode", USING_VISUAL_MODE ? 0 : 1);
 }
 
 public void finishedGame() {
