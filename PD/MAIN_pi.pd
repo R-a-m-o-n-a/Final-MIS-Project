@@ -1,4 +1,4 @@
-#N canvas -1 15 798 808 12;
+#N canvas -2 3 798 808 12;
 #X msg 45 266 \; pd dsp \$1;
 #X obj 45 160 tgl 30 0 empty empty empty 17 7 0 10 -162280 -1 -1 0
 1;
@@ -24,8 +24,6 @@
 #X obj 482 67 catch~ left;
 #X obj 45 18 r startGame;
 #X obj 570 141 pack 0 500;
-#X obj 980 255 s startCountdown;
-#X obj 990 265 s startCountdown;
 #X obj 82 54 r startCountdown;
 #X connect 1 0 0 0;
 #X connect 1 0 2 0;
@@ -38,4 +36,4 @@
 #X connect 17 0 8 0;
 #X connect 18 0 1 0;
 #X connect 19 0 6 0;
-#X connect 22 0 1 0;
+#X connect 20 0 1 0;
