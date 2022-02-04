@@ -17,6 +17,7 @@ boolean isGameRunning = false;
 // variables for statistics
 String USER_NAME = "SoundTest"; // fill in participant name here
 boolean USING_VISUAL_MODE = true; // true for visual, false for auditory/haptic mode
+int TRIAL_NO = 1; // the number of the round with the current user (1→2→3...)
 String COMMENT = ""; // optional
 Timer gravelTimer = new Timer();
 Timer frozenTimer = new Timer();
@@ -227,6 +228,7 @@ private void publishStats() {
   stats_json = new JSONObject();
 
   stats_json.setString("name", USER_NAME);
+  stats_json.setInt("trialNo", TRIAL_NO);
   stats_json.setBoolean("visual", USING_VISUAL_MODE);
   if(COMMENT.length() > 0)  stats_json.setString("comment", COMMENT);
   stats_json.setBoolean("successfullyFinished", stats_successfullyFinished);
@@ -238,7 +240,7 @@ private void publishStats() {
   stats_json.setString("startTime", stats_startTime);
   stats_json.setString("finishTime", getCurrentTime());
 
-  saveJSONObject(stats_json, "trial_data/" + USER_NAME + "_" + timestamp + ".json");
+  saveJSONObject(stats_json, "trial_data/" + USER_NAME + "_" + TRIAL_NO + "_" + (USING_VISUAL_MODE ? "visual" : "auditory") + "_" + timestamp + ".json");
   
   statsPublished = true;
   println("Datei gesichert");
