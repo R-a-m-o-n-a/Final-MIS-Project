@@ -99,7 +99,9 @@ private void startCountdown() {
   sendOscMessage("/startCountdown", USING_VISUAL_MODE ? 0 : 1);
   if(USING_VISUAL_MODE) {
     sendOscMessage("/visualMode", 0);
-  }
+  } else {
+    sendOscMessage("/visualMode", 1);
+}
 }
 
 private void displayStartInfos() {
@@ -175,7 +177,9 @@ private void startGame() {
   sendOscMessage("/startGame", 1);
   if(USING_VISUAL_MODE) {
     sendOscMessage("/visualMode", 0);
-  }
+  } else {
+     sendOscMessage("/visualMode", 1);
+}
 }
 
 public void finishedGame() {
