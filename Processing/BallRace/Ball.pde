@@ -30,7 +30,7 @@ public class Ball {
 
     /* change is allowed when
      *ball does not go off track with this change &&   not next to wall   &&  not already changing lane  &&   not currently jumping       */
-    if (lane + dir >= 0 && lane + dir < noOfLanes && !wouldCauseCollision && abs(changingLaneOffset) < 5 && ballSize == originalBallSize) {
+    if (lane + dir >= 0 && lane + dir < noOfLanes && !wouldCauseCollision && abs(changingLaneOffset) < 10 && ballSize == originalBallSize) {
       if (wasBallOnGravel) {
         offsetRecoveryRate = GRAVEL_OFFSET_RECOVERY_RATE;
       } else {
