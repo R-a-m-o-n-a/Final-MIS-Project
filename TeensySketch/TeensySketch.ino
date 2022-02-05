@@ -292,7 +292,7 @@ void handle_received_message(char *received_message) {
     Serial.println(" ");
     */
     
-    analogWrite(motor2_pin, 255);
+    analogWrite(motor2_pin, 100);
     
   }
   
@@ -320,7 +320,7 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
     Serial.println(" ");
     */
     
-    analogWrite(motor3_pin, 130);
+    analogWrite(motor3_pin, 100);
     
   }
   
@@ -347,7 +347,7 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
     Serial.println(" ");
     */
     
-    analogWrite(motor4_pin, 130);
+    analogWrite(motor4_pin, 255);
     
   }
   
