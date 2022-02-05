@@ -5,17 +5,18 @@
 #include <EEPROM.h>
 #include <string.h>
 
-uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; //how often to read data from the board
+uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; // how often to read data from the board
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
 
 const float THRESHOLD = 10; // threshold for move detection (when user bends left/right)
 
-// variables for 1st alternative of move detection (detection of the real peak of the movement)
+/* variables for 1st alternative of move detection (detection of the real peak of the movement)
 float prevAngle = 0;
 boolean thresholdExceeded = false;
 boolean dataGoingUp = false;
 boolean dataGoingDown = false;
+*/
 
 // variables for 2nd alternative (register peak as soon as data exceeds threshold)
 boolean minRegistered = false;
@@ -369,7 +370,7 @@ void setup(void)
 {
   Serial.begin(115200);
 
-    // loop for setting up the motors as OUTPUTs. To comment out if not needed.
+  // loop for setting up the motors as OUTPUTs. To comment out if not needed.
     
   for (int pinNumber = 2; pinNumber < 6; pinNumber++) {
   pinMode(pinNumber, OUTPUT);
@@ -463,7 +464,6 @@ void setup(void)
   //bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
 
       
-  
   if (foundCalib){
     
     performMagCal(); /* always recalibrate the magnetometers as it goes out of calibration very often */
@@ -501,7 +501,6 @@ void setup(void)
       Serial.println("\n\nStoring calibration data to EEPROM...");
     }
 
-
     eeAddress = 0;
     EEPROM.put(eeAddress, bnoID);
     eeAddress += sizeof(long);
@@ -516,21 +515,14 @@ void setup(void)
 
   }
 
-
-
-  
-
   delay(1000);
-  
 }
 
 
 void loop(void)
 {
-
   receive_message();
   
-  //
   unsigned long tStart = micros();
   sensors_event_t orientationData;
   bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
@@ -543,17 +535,13 @@ void loop(void)
     Serial.print(orientationData.orientation.y);
     Serial.print(" , ");
     Serial.println(orientationData.orientation.z);*/
-
-    //detectMoveVersion1(orientationData.orientation.y);
-     detectMoveVersion2(orientationData.orientation.y);
-
     printCount = 0;
   }
   else {
     printCount = printCount + 1;
   }
 
-
+  detectMoveVersion2(orientationData.orientation.y);
 
   while ((micros() - tStart) < (BNO055_SAMPLERATE_DELAY_MS * 1000))
   {
