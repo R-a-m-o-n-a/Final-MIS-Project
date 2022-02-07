@@ -9,8 +9,6 @@ uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; // how often to read data from the boa
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
 
-const float THRESHOLD = 10; // threshold for move detection (when user bends left/right)
-
 /* variables for 1st alternative of move detection (detection of the real peak of the movement)
 float prevAngle = 0;
 boolean thresholdExceeded = false;
@@ -19,6 +17,7 @@ boolean dataGoingDown = false;
 */
 
 // variables for 2nd alternative (register peak as soon as data exceeds threshold)
+const float THRESHOLD = 10; // threshold for move detection (when user bends left/right)
 boolean minRegistered = false;
 boolean maxRegistered = false;
 
@@ -35,7 +34,7 @@ char received_message[MAX_LENGTH_MESSAGE];
 char START_MARKER = '[';
 char END_MARKER = ']';
 
-    
+
 boolean new_message_received = false;
 
 
@@ -45,10 +44,10 @@ boolean new_message_received = false;
 
 // Motors pins - Teensy Digital pins
 
-const uint16_t motor1_pin = 2; 
-const uint16_t motor2_pin = 3; 
-const uint16_t motor3_pin = 4; 
-const uint16_t motor4_pin = 5; 
+const uint16_t motor1_pin = 2;
+const uint16_t motor2_pin = 3;
+const uint16_t motor3_pin = 4;
+const uint16_t motor4_pin = 5;
 
 
 #define ANALOG_BIT_RESOLUTION 12 // Only for Teensy
@@ -168,35 +167,35 @@ void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData)
 
 /* Magnetometer calibration */
 void performMagCal(void) {
-  
+
   /* Get the four calibration values (0..3) */
   /* Any sensor data reporting 0 should be ignored, */
   /* 3 means 'fully calibrated" */
   uint8_t system, gyro, accel, mag;
   system = gyro = accel = mag = 0;
- 
+
   while (mag != 3) {
-    
+
     bno.getCalibration(&system, &gyro, &accel, &mag);
     if(display_BNO055_info){
-      
+
       displayCalStatus();
       Serial.println("");
     }
   }
-  
+
   if(display_BNO055_info){
 
     Serial.println("\nMagnetometer calibrated!");
   }
-}  
+}
 
 
 
 /** Functions for handling received messages ***********************************************************************/
 
 void receive_message() {
-  
+
     static boolean reception_in_progress = false;
     static byte ndx = 0;
     char rcv_char;
@@ -239,18 +238,18 @@ void handle_received_message(char *received_message) {
   //Serial.print("received_message: ");
   //Serial.println(received_message);
 
-  
+
   char *all_tokens[2]; //NOTE: the message is composed by 2 tokens: command and value
   const char delimiters[5] = {START_MARKER, ',', ' ', END_MARKER,'\0'};
   int i = 0;
 
   all_tokens[i] = strtok(received_message, delimiters);
-  
+
   while (i < 2 && all_tokens[i] != NULL) {
     all_tokens[++i] = strtok(NULL, delimiters);
   }
 
-  char *command = all_tokens[0]; 
+  char *command = all_tokens[0];
   char *value = all_tokens[1];
 
 
@@ -263,11 +262,11 @@ void handle_received_message(char *received_message) {
     Serial.print(value);
     Serial.println(" ");
     */
-    
+
     analogWrite(motor1_pin, 255);
-    
+
   }
-  
+
   if (strcmp(command,"motor_lane_0") == 0 && strcmp(value,"0") == 0) {
 
     /*
@@ -278,11 +277,11 @@ void handle_received_message(char *received_message) {
     Serial.println(" ");
     */
     analogWrite(motor1_pin, 0);
-    
+
   }
 
 
-  
+
   if (strcmp(command,"motor_lane_1") == 0 && strcmp(value,"1") == 0) {
 
     /*
@@ -292,11 +291,11 @@ void handle_received_message(char *received_message) {
     Serial.print(value);
     Serial.println(" ");
     */
-    
+
     analogWrite(motor2_pin, 100);
-    
+
   }
-  
+
   if (strcmp(command,"motor_lane_1") == 0 && strcmp(value,"0") == 0) {
 
     /*
@@ -307,9 +306,9 @@ void handle_received_message(char *received_message) {
     Serial.println(" ");
     */
     analogWrite(motor2_pin, 0);
-    
+
   }
- 
+
 
 if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
 
@@ -320,11 +319,11 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
     Serial.print(value);
     Serial.println(" ");
     */
-    
+
     analogWrite(motor3_pin, 100);
-    
+
   }
-  
+
   if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"0") == 0) {
 
     /*
@@ -335,7 +334,7 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
     Serial.println(" ");
     */
     analogWrite(motor3_pin, 0);
-    
+
   }
 
   if (strcmp(command,"motor_lane_3") == 0 && strcmp(value,"1") == 0) {
@@ -347,11 +346,11 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
     Serial.print(value);
     Serial.println(" ");
     */
-    
+
     analogWrite(motor4_pin, 255);
-    
+
   }
-  
+
   if (strcmp(command,"motor_lane_3") == 0 && strcmp(value,"0") == 0) {
 
     /*
@@ -362,7 +361,7 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
     Serial.println(" ");
     */
     analogWrite(motor4_pin, 0);
-    
+
   }
 }
 
@@ -371,7 +370,7 @@ void setup(void)
   Serial.begin(115200);
 
   // loop for setting up the motors as OUTPUTs. To comment out if not needed.
-    
+
   for (int pinNumber = 2; pinNumber < 6; pinNumber++) {
   pinMode(pinNumber, OUTPUT);
   digitalWrite(pinNumber, LOW);
@@ -387,9 +386,9 @@ void setup(void)
   long bnoID;
   bool foundCalib = false;
 
-    
+
   if(reset_calibration){// Then reset the EEPROM so a new calibration can be made
-    
+
     EEPROM.put(eeAddress, 0);
     eeAddress += sizeof(long);
     EEPROM.put(eeAddress, 0);
@@ -399,9 +398,9 @@ void setup(void)
       delay(10000);
     }
   }
-  
+
   EEPROM.get(eeAddress, eeBnoID);
-  
+
   adafruit_bno055_offsets_t calibrationData;
   sensor_t sensor;
 
@@ -411,27 +410,27 @@ void setup(void)
   */
   bno.getSensor(&sensor);
   bnoID = sensor.sensor_id;
-    
+
   if (eeBnoID != bnoID) {
-  
+
     if(display_BNO055_info){
-      
+
       Serial.println("\nNo Calibration Data for this sensor exists in EEPROM");
       delay(2000);
     }
   }
   else{
 
-    if(display_BNO055_info){  
-       
+    if(display_BNO055_info){
+
       Serial.println("\nFound Calibration for this sensor in EEPROM.");
     }
-    
+
     eeAddress += sizeof(long);
     EEPROM.get(eeAddress, calibrationData);
 
     if(display_BNO055_info){
-      
+
       displaySensorOffsets(calibrationData);
       Serial.println("\n\nRestoring Calibration data to the BNO055...");
     }
@@ -439,16 +438,16 @@ void setup(void)
     bno.setSensorOffsets(calibrationData);
 
     if(display_BNO055_info){
-      
+
       Serial.println("\n\nCalibration data loaded into BNO055");
       delay(2000);
     }
-    
+
     foundCalib = true;
   }
 
   if(display_BNO055_info){
-    
+
     /* Display some basic information on this sensor */
     displaySensorDetails();
 
@@ -463,39 +462,39 @@ void setup(void)
   //sensors_event_t orientationData;
   //bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
 
-      
+
   if (foundCalib){
-    
+
     performMagCal(); /* always recalibrate the magnetometers as it goes out of calibration very often */
   }
   else {
-    
+
     if(display_BNO055_info){
-      
+
       Serial.println("Please Calibrate Sensor: ");
-      delay(2000); 
+      delay(2000);
     }
-        
+
     while (!bno.isFullyCalibrated()){
 
       if(display_BNO055_info){
-        
+
             displayCalStatus();
             Serial.println("");
-            delay(BNO055_PERIOD_MILLISECS); // Wait for the specified delay before requesting new data            
+            delay(BNO055_PERIOD_MILLISECS); // Wait for the specified delay before requesting new data
         }
     }
 
     adafruit_bno055_offsets_t newCalib;
     bno.getSensorOffsets(newCalib);
-    
+
     if(display_BNO055_info){
 
       Serial.println("\nFully calibrated!");
       delay(3000);
       Serial.println("--------------------------------");
       Serial.println("Calibration Results: ");
-    
+
       displaySensorOffsets(newCalib);
 
       Serial.println("\n\nStoring calibration data to EEPROM...");
@@ -522,7 +521,7 @@ void setup(void)
 void loop(void)
 {
   receive_message();
-  
+
   unsigned long tStart = micros();
   sensors_event_t orientationData;
   bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
@@ -567,31 +566,29 @@ void detectMoveVersion1(float angle) {
   prevAngle = angle;
 }
 */
+
 void detectMoveVersion2(float angle) {
-  //Serial.println(angle);
   if (angle > THRESHOLD && !maxRegistered) { // found maximum
-    
     Serial.print("dir, ");
     Serial.println(1);
     maxRegistered = true;
   }
-  if (angle < (-1)*THRESHOLD && !minRegistered) { // found minimum
-    
+  if (angle < (-1) * THRESHOLD && !minRegistered) { // found minimum
     Serial.print("dir, ");
     Serial.println(-1);
     minRegistered = true;
   }
 
   // reset ability to detect peaks once the angle falls under the threshold (range between -Threshold and +Threshold)
-if (angle < THRESHOLD && maxRegistered) {
+  if (angle < THRESHOLD && maxRegistered) {
     maxRegistered = false;
-    
+
     Serial.print("dir, ");
     Serial.println(0);
   }
-  if (angle > (-1)*THRESHOLD && minRegistered) {
+  if (angle > (-1) * THRESHOLD && minRegistered) {
     minRegistered = false;
-    
+
     Serial.print("dir, ");
     Serial.println(0);
   }
