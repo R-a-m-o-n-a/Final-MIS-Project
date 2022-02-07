@@ -1,3 +1,17 @@
+/* 
+   This sketch reads data from a BNO055 IMU sensor and sends it to the serial port. 
+   The data that we send over is related to the direction of movement of the user, 
+   which is transformed in -1 for movement towards the left and 1 for movement towards the right.
+   We took inspiration for this code from AdaFruit's public repositories on GitHub. 
+   In particular, we started from this code to learn how to track position, and then we added our own custom solution to track direction:
+   >>> https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/position/position.ino <<<
+   
+   Then, we amended the code seen in class about BNO0550 maintenance, and we added the possibility of calibrating the sensor to this sketch.
+   Lastly, we added code for bidirectional communication with Pure Data by implementing code snippets seen in class, 
+   although we have adapted some parts (specifically, the motors' pin-outs and behaviour) to our own specific needs, 
+   as we (for now) have decided to implement 4 motors in the SensoRoll system.
+*/
+
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
@@ -5,6 +19,8 @@
 #include <EEPROM.h>
 #include <string.h>
 
+
+// variables to determine behaviour of the BNO055
 uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; // how often to read data from the board
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
@@ -31,11 +47,9 @@ char END_MARKER = ']';
 boolean new_message_received = false;
 
 
-
-
 /* Digital outputs *************************************************************/
 
-// Motors pins - Teensy Digital pins
+// Motors pins - Teensy PWM Digital pins
 
 const uint16_t motor1_pin = 2;
 const uint16_t motor2_pin = 3;
@@ -47,7 +61,7 @@ const uint16_t motor4_pin = 5;
 
 
 
-/* IMU ***************************************************************************************************/
+/* IMU code for calibration, amended from code seen in class ***************************************************************************************************/
 
 /* Set the delay between fresh samples */
 static const unsigned long BNO055_PERIOD_MILLISECS = 100; // E.g. 4 milliseconds per sample for 250 Hz
@@ -246,6 +260,10 @@ void handle_received_message(char *received_message) {
   char *value = all_tokens[1];
 
 
+/* Motors' behaviour code, amended from code seen in class and adapted to our need. 
+   In this sketch, we refer to the 4 motors that we hooked up with the Teensy; these are the motors that go on the belt of the user.
+
+*/
   if (strcmp(command,"motor_lane_0") == 0 && strcmp(value,"1") == 0) {
 
     /*
@@ -272,7 +290,6 @@ void handle_received_message(char *received_message) {
     analogWrite(motor1_pin, 0);
 
   }
-
 
 
   if (strcmp(command,"motor_lane_1") == 0 && strcmp(value,"1") == 0) {
@@ -358,9 +375,11 @@ if (strcmp(command,"motor_lane_2") == 0 && strcmp(value,"1") == 0) {
   }
 }
 
+// ************************************************* SETUP AND LOOP ******************************************************************
+
 void setup(void)
 {
-  Serial.begin(115200);
+  Serial.begin(115200); //actually, because we are using Teensy, we do not need this. We kept it anyway when we tested our system with the Arduino.
 
   // loop for setting up the motors as OUTPUTs. To comment out if not needed.
 
@@ -513,11 +532,13 @@ void setup(void)
 
 void loop(void)
 {
-  receive_message();
+  receive_message(); // function to handle received message
 
   unsigned long tStart = micros();
   sensors_event_t orientationData;
   bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
+
+// this part was taken from AdaFruit's public GitHub repository about the BNO055
 
   if (printCount * BNO055_SAMPLERATE_DELAY_MS >= PRINT_DELAY_MS) {
     //enough iterations have passed that we can print the latest data
@@ -540,6 +561,14 @@ void loop(void)
     //poll until the next sample is ready
   }
 }
+
+/* 
+   down below is our custom solution. We detect the angle of movement and we compare it with a threshold set at the beginning of the sketch. 
+   The result of this comparison is either a -1, which signals movement to the left, or a 1, which signals movement to the right.
+   Lastly, the Serial.print() sends this data to the serial port, which is then received in Pure Data to handle movement of the ball
+   in Processing.
+   
+*/
 
 void detectMoveVersion2(float angle) {
   if (angle > THRESHOLD && !maxRegistered) { // found maximum
