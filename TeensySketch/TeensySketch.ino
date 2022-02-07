@@ -9,14 +9,7 @@ uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; // how often to read data from the boa
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
 
-/* variables for 1st alternative of move detection (detection of the real peak of the movement)
-float prevAngle = 0;
-boolean thresholdExceeded = false;
-boolean dataGoingUp = false;
-boolean dataGoingDown = false;
-*/
-
-// variables for 2nd alternative (register peak as soon as data exceeds threshold)
+// variables for movement detection (2nd alternative: register peak as soon as data exceeds threshold)
 const float THRESHOLD = 10; // threshold for move detection (when user bends left/right)
 boolean minRegistered = false;
 boolean maxRegistered = false;
@@ -547,25 +540,6 @@ void loop(void)
     //poll until the next sample is ready
   }
 }
-
-/*
-void detectMoveVersion1(float angle) {
-  //Serial.println(angle);
-  if (thresholdExceeded) {
-    // extrema are always registered on the first dataPoint after the real peak to make sure each peak is only registered once
-    if(angle < prevAngle && dataGoingUp) { // found maximum
-      Serial.println(1);
-    }
-    if(angle > prevAngle && dataGoingDown) { // found minimum
-      Serial.println(-1);
-    }
-  }
-  dataGoingUp = angle > prevAngle;
-  dataGoingDown = angle < prevAngle;
-  thresholdExceeded = abs(angle) > THRESHOLD;
-  prevAngle = angle;
-}
-*/
 
 void detectMoveVersion2(float angle) {
   if (angle > THRESHOLD && !maxRegistered) { // found maximum
