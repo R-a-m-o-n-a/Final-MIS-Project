@@ -10,6 +10,18 @@
    Lastly, we added code for bidirectional communication with Pure Data by implementing code snippets seen in class, 
    although we have adapted some parts (specifically, the motors' pin-outs and behaviour) to our own specific needs, 
    as we (for now) have decided to implement 4 motors in the SensoRoll system.
+   
+   ===============================
+   Connections to the Teensy 3.6
+   ===============================
+
+   Connect BNO055 SCL to analog 5
+   Connect BNO055 to analog 4
+   Connect Vibrotactile motors to Digital Pins 2,3,4,5
+   Connect VDD to 3.3V DC
+   Connect GROUND to common ground
+   ====================================================
+   
 */
 
 #include <Wire.h>
@@ -21,7 +33,7 @@
 
 
 // variables to determine behaviour of the BNO055
-uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; // how often to read data from the board
+uint16_t BNO055_SAMPLERATE_DELAY_MS = 100; // how often to read data from the board
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
 
