@@ -10,6 +10,18 @@
    Lastly, we added code for bidirectional communication with Pure Data by implementing code snippets seen in class, 
    although we have adapted some parts (specifically, the motors' pin-outs and behaviour) to our own specific needs, 
    as we (for now) have decided to implement 4 motors in the SensoRoll system.
+   
+   ===============================
+   Connections to the Teensy 3.6
+   ===============================
+
+   Connect BNO055 SCL to analog 5
+   Connect BNO055 to analog 4
+   Connect Vibrotactile motors to Digital Pins 2,3,4,5
+   Connect VDD to 3.3V DC
+   Connect GROUND to common ground
+   ====================================================
+   
 */
 
 #include <Wire.h>
