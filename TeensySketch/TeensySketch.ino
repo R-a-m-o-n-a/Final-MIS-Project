@@ -33,7 +33,7 @@
 
 
 // variables to determine behaviour of the BNO055
-uint16_t BNO055_SAMPLERATE_DELAY_MS = 10; // how often to read data from the board
+uint16_t BNO055_SAMPLERATE_DELAY_MS = 100; // how often to read data from the board
 uint16_t PRINT_DELAY_MS = 500; // how often to print the data
 uint16_t printCount = 0; //counter to avoid printing every 10MS sample
 
