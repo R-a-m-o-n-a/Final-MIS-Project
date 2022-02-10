@@ -80,6 +80,7 @@ GamingExpSd <- sd(QDATA$GamingExp)
 GamingExpSummary
 GamingExpMean
 GamingExpSd
+barplot(table(QDATA$GamingExp),xlab="Gaming Experience of Participants",ylab="Frequency",col="green")
 
 
 
@@ -103,12 +104,19 @@ VMeanScores <- apply(QDATA[,5:9],2,mean)
 AHMeanScores <- apply(QDATA[,10:14],2,mean)
 VSdScores <- apply(QDATA[,5:9],2,sd)
 AHSdScores <- apply(QDATA[,10:14],2,sd)
+DiffMeanScores <- apply(QDATA[,15:19],2,mean)
+DiffSdScores <- apply(QDATA[,15:19],2,sd)
 
 VMeanScores
 AHMeanScores
 VSdScores
 AHSdScores
+DiffMeanScores
+DiffSdScores
 
+boxplot(QDATA[,15:19],names=c("OrientTrack","StayTrack","WallDistinct","WallLocate","WallAvoid"),
+ylab="Score Difference",main="Score Differences on Subjective Answers between V & A/H Modes",col="cyan",ylim=c(1,7))
+abline(4,0,lty=3)
 
 
 # Computing Correlation between Performance and Subjective data (Answers to questions about the system) in Auditory/Haptics mode
@@ -123,7 +131,6 @@ cor(AHDATA$totalGameTime2, QDATA[,10:14])
 # For the Audio/Haptics mode, there is a Medium correlation (in negative direction) between Performance and Subjective data about each game task perceived difficulty.
 # This means that when the design of the game elements did have a Medium impact (not negligible) on the performance of the Participants playing in the Audio/Haptics mode.
 # In other words, when each of game tasks is accomplished with greater difficulty (lower score), the participants show lower performace (more time to complete the track).
-
 
 
 
