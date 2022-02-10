@@ -59,13 +59,14 @@ public class Ball {
   }
 
   public void draw() {
-    int balancedLane = lane - 2;
+    int balancedLane = lane - (noOfLanes/2);
+    int moveToMiddleOfLane = (noOfLanes%2 == 0) ? laneWidth / 2 : 0;
     /* horizontal ball position is calculated like this:
      * initially set to middle of screen
      *  → move half a lane to the right, so that ball is now placed centrally in the lane on the right of middle
      *  → move to correct lane by applying the previous balancedLane parameter
      *  → add the offset if ball is currently changing lane */
-    int xPos = width / 2 + laneWidth / 2 + balancedLane * laneWidth + changingLaneOffset;
+    int xPos = width / 2 + moveToMiddleOfLane + balancedLane * laneWidth + changingLaneOffset;
 
     if (isSpeedingUp && abs(changingLaneOffset) < laneWidth/2) { // when back on normal track change back to normal speed
       if (frameRate < 57) {

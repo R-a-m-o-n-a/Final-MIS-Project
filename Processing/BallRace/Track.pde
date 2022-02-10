@@ -4,13 +4,13 @@ import java.util.concurrent.ThreadLocalRandom;
 int TRACK_LENGTH = 400; // how many rows in the track array
 int TRACK_WIDTH = 1000; // how many pixels the whole track is wide
 int ROW_HEIGHT = 100; // how many pixels each row is high
-int NO_OF_LANES = 4;
+int NO_OF_LANES = 4; // game is designed for 4 lanes, but more should work as well (if wanted, need testing to make sure everything works)
 int BALL_SPACING = 4; // the amount of pixels that should be on top and bottom when the ball is in a lane. The ball size gets calculated based on this
 
 // wall parameters
 int MIN_DISTANCE_BETWEEN_WALLS = 10;
 int MAX_DISTANCE_BETWEEN_WALLS = 15;
-int FIRST_WALL_ROW = 10;
+int FIRST_WALL_ROW = 10; // on which row of the track should the first wall be placed?
 int PERCENTAGE_OF_BIG_WALLS = 30;
 int COLLISION_TIMEOUT = 2000;  // how long the ball cannot move after hitting a wall (in ms)
 int JUMP_DURATION_IN_PIXELS = ceil(ROW_HEIGHT * 4);  // the ball jumps for an amount of pixels moved, that way the difficulty stays the same if we change the speed
