@@ -205,7 +205,9 @@ void sendOscMessage(String scope, int value) {
 // method to handle the change lane when the OSC message /changeLane is received
 void receiveChangeLane(int dir) {
   println("received OSC message '/changeLane' with dir " + dir);
-  track.moveBall(dir);   
+  if(dir == 1 || dir == -1) {
+    track.moveBall(dir);   
+  }
 }
 
 // method to handle the clap function to avoid big walls, called when OSC message /clap is received
