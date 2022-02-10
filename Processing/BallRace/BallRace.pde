@@ -199,13 +199,13 @@ void sendOscMessage(String scope, int value) {
   OscMessage message = new OscMessage(scope);
   message.add(value);
   oscP5.send(message, PD_Location);
-  //println("OSCmessage " + scope + " " + value);
+  println("OSCmessage " + scope + " " + value);
 }
 
 // method to handle the change lane when the OSC message /changeLane is received
 void receiveChangeLane(int dir) {
   println("received OSC message '/changeLane' with dir " + dir);
-  if(dir == 1 ||dir == -1) {
+  if(dir == 1 || dir == -1) {
     track.moveBall(dir);   
   }
 }

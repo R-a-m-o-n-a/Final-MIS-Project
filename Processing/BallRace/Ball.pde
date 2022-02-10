@@ -42,7 +42,6 @@ public class Ball {
       changingLaneOffset = laneWidth * dir * (-1); // start the offset for the gradual lane change
     } else {
       sendOscMessage("/changeLaneProhibited", 1);
-      println("PROHIBITED!");
     }
 
     boolean isBallOnGravel = (lane == 0 || lane == noOfLanes - 1);
