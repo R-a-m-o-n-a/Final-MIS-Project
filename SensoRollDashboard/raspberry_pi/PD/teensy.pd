@@ -1,0 +1,169 @@
+#N canvas -8 -8 1536 781 12;
+#X obj 25 81 cnv 15 700 500 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X msg 83 193 close;
+#X msg 67 107 devices;
+#X obj 73 375 s;
+#X obj 73 353 serial_print any;
+#X obj 348 107 r dir;
+#X obj 415 170 cnv 15 80 40 empty empty empty 20 12 0 14 -262130 -66577
+0;
+#X floatatom 429 179 8 0 0 0 - - -;
+#X obj 429 226 s _dir;
+#X obj 918 576 _format_serial_messages;
+#X obj 918 604 s to_Teensy;
+#X obj 193 262 r to_Teensy;
+#X msg 918 327 0;
+#X msg 965 328 1;
+#X msg 1157 324 0;
+#X msg 1204 325 1;
+#X text 354 277 "dir" is sent to subpatch "OSC" to deal with movement
+of the ball on Processing., f 43;
+#X obj 1372 188 sel 0;
+#X obj 1428 188 sel 1;
+#X obj 1480 188 sel 2;
+#X obj 1535 187 sel 3;
+#X obj 1373 81 cnv 15 250 100 empty empty empty 20 12 0 14 -203904
+-66577 0;
+#X obj 1387 87 r laneChanged;
+#X floatatom 1387 111 5 0 0 0 - - -;
+#X msg 1370 323 0;
+#X msg 1417 324 1;
+#X msg 1581 323 0;
+#X msg 1627 324 1;
+#X obj 834 78 cnv 15 405 90 empty empty empty 20 12 0 14 -203904 -66577
+0;
+#X obj 1044 87 r startGame;
+#X floatatom 1044 145 5 0 0 0 - - -;
+#X obj 1016 186 sel 0;
+#X obj 1102 185 sel 1;
+#X msg 918 360 motor_lane_0 \$1;
+#X msg 1157 357 motor_lane_1 \$1;
+#X msg 1370 356 motor_lane_2 \$1;
+#X msg 1581 356 motor_lane_3 \$1;
+#X obj 348 135 unpack s f;
+#X obj 1387 147 spigot;
+#X obj 1466 138 tgl 15 0 empty empty empty 17 7 0 10 -232576 -1 -1
+1 1;
+#X obj 1499 87 loadbang;
+#X obj 853 88 r reachedFinishLine;
+#X msg 853 117 0;
+#X floatatom 853 146 5 0 0 0 - - -;
+#X text 1021 14 Receiving command to vibrate motors when users go on
+specific lanes in Processing. When the game is stopped \, they all
+turn OFF. When game is started \, initial lane is activated., f 89
+;
+#X text 790 15 After reaching the finish line \, turns the motors OFF
+, f 28;
+#X obj 874 357 cnv 15 30 30 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X obj 1110 354 cnv 15 30 30 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X obj 1321 351 cnv 15 30 30 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X obj 1529 350 cnv 15 30 30 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X text 65 15 Opening serial communication and then receiving data
+about direction of IMU movement from Teensy. When this patch is on
+the Raspberry Pi \, comport number should change accordingly.;
+#X obj 1500 132 r visualMode;
+#X obj 1043 119 spigot;
+#X obj 1114 134 tgl 15 0 empty empty empty 17 7 0 10 -232576 -1 -1
+1 1;
+#X obj 1135 86 loadbang;
+#X obj 1136 131 r visualMode;
+#X obj 924 699 s motor0_status;
+#X obj 1039 699 s motor1_status;
+#X obj 1153 699 s motor2_status;
+#X obj 1268 699 s motor3_status;
+#X obj 1465 669 r all_motors_on_off;
+#X obj 73 329 comport 0 115200;
+#X obj 1456 701 sel 0;
+#X obj 1527 701 sel 1;
+#X obj 924 728 cnv 15 700 20 empty empty empty 20 12 0 14 -261234 -66577
+0;
+#X text 676 633 the spigot object allows messages to flow when the
+game is in auditory/haptic mode. In visual mode \, spigot is closed
+and no numbers flow. Motor status messages are dealt with on the dashboard
+on the laptop., f 28;
+#X connect 1 0 61 0;
+#X connect 2 0 61 0;
+#X connect 4 0 3 0;
+#X connect 4 1 3 1;
+#X connect 5 0 37 0;
+#X connect 7 0 8 0;
+#X connect 9 0 10 0;
+#X connect 11 0 61 0;
+#X connect 12 0 33 0;
+#X connect 13 0 33 0;
+#X connect 13 0 56 0;
+#X connect 14 0 34 0;
+#X connect 15 0 34 0;
+#X connect 15 0 57 0;
+#X connect 17 0 13 0;
+#X connect 17 0 14 0;
+#X connect 17 0 24 0;
+#X connect 17 0 26 0;
+#X connect 18 0 15 0;
+#X connect 18 0 12 0;
+#X connect 18 0 24 0;
+#X connect 18 0 26 0;
+#X connect 19 0 25 0;
+#X connect 19 0 12 0;
+#X connect 19 0 14 0;
+#X connect 19 0 26 0;
+#X connect 20 0 27 0;
+#X connect 20 0 12 0;
+#X connect 20 0 14 0;
+#X connect 20 0 24 0;
+#X connect 22 0 23 0;
+#X connect 23 0 38 0;
+#X connect 24 0 35 0;
+#X connect 25 0 35 0;
+#X connect 25 0 58 0;
+#X connect 26 0 36 0;
+#X connect 27 0 36 0;
+#X connect 27 0 59 0;
+#X connect 29 0 52 0;
+#X connect 30 0 32 0;
+#X connect 30 0 31 0;
+#X connect 31 0 12 0;
+#X connect 31 0 14 0;
+#X connect 31 0 24 0;
+#X connect 31 0 26 0;
+#X connect 32 0 24 0;
+#X connect 32 0 26 0;
+#X connect 32 0 15 0;
+#X connect 32 0 12 0;
+#X connect 33 0 9 0;
+#X connect 34 0 9 0;
+#X connect 35 0 9 0;
+#X connect 36 0 9 0;
+#X connect 37 1 7 0;
+#X connect 38 0 17 0;
+#X connect 38 0 18 0;
+#X connect 38 0 19 0;
+#X connect 38 0 20 0;
+#X connect 39 0 38 1;
+#X connect 40 0 39 0;
+#X connect 41 0 42 0;
+#X connect 42 0 43 0;
+#X connect 43 0 31 0;
+#X connect 51 0 39 0;
+#X connect 52 0 30 0;
+#X connect 53 0 52 1;
+#X connect 54 0 53 0;
+#X connect 55 0 53 0;
+#X connect 60 0 62 0;
+#X connect 60 0 63 0;
+#X connect 61 0 4 0;
+#X connect 62 0 12 0;
+#X connect 62 0 14 0;
+#X connect 62 0 24 0;
+#X connect 62 0 26 0;
+#X connect 62 0 53 0;
+#X connect 63 0 25 0;
+#X connect 63 0 15 0;
+#X connect 63 0 13 0;
+#X connect 63 0 39 0;
+#X connect 63 0 27 0;

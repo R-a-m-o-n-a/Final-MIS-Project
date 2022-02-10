@@ -1,0 +1,117 @@
+#N canvas -8 -8 1536 781 12;
+#X obj 8 59 cnv 15 1580 370 empty empty empty 20 12 0 14 -228856 -66577
+0;
+#X obj 32 102 cnv 15 250 300 empty empty empty 20 12 0 14 -261682 -66577
+0;
+#X obj 48 160 r changeLane;
+#X obj 44 105 cnv 15 150 25 empty empty Teensy_Status 20 12 0 14 -262130
+-66577 0;
+#X obj 19 21 cnv 15 100 20 empty empty Control_Dashboard_SensoRoll
+20 12 1 30 -262144 -66577 0;
+#X obj 1074 102 cnv 15 500 300 empty empty empty 20 12 0 14 -204786
+-66577 0;
+#X obj 1098 147 r motor0_status;
+#X obj 1098 171 bng 15 250 50 0 empty empty empty 17 7 0 10 -262130
+-1 -1;
+#X obj 1213 171 bng 15 250 50 0 empty empty empty 17 7 0 10 -262130
+-1 -1;
+#X obj 1329 171 bng 15 250 50 0 empty empty empty 17 7 0 10 -262130
+-1 -1;
+#X obj 1443 170 bng 15 250 50 0 empty empty empty 17 7 0 10 -262130
+-1 -1;
+#X obj 1213 147 r motor1_status;
+#X obj 1329 147 r motor2_status;
+#X obj 1444 147 r motor3_status;
+#X obj 41 195 cnv 15 60 30 empty empty empty 20 12 0 14 -262130 -66577
+0;
+#X floatatom 48 200 5 0 0 0 - - -;
+#X text 41 240 if you see -1 and 1 here \, BNO055 sensor is sending
+data correctly through the serial port and the ball is changing lane
+because of it, f 31;
+#X text 1094 192 if these bang it means the motors are receiving messages
+;
+#X obj 657 102 cnv 15 400 300 empty empty empty 20 12 0 14 -203904
+-66577 0;
+#X obj 721 147 r clap;
+#X obj 721 171 bng 15 250 50 0 empty empty empty 17 7 0 10 -262130
+-1 -1;
+#X obj 813 234 hsl 128 15 0 127 0 0 empty empty threshold_for_detecting_clap
+-2 -8 0 10 -262130 -1 -1 10000 1;
+#X floatatom 810 254 5 0 0 0 - - -;
+#X obj 810 146 loadbang;
+#X msg 810 178 100, f 4;
+#X obj 810 287 s clap_threshold_control;
+#X msg 862 179 50;
+#X msg 907 179 25;
+#X obj 719 107 cnv 15 230 24 empty empty Bonk~_threshold_control 20
+12 0 14 -262130 -66577 0;
+#X text 697 328 here you can control the threshold for the detection
+of the clap in real time and you can check if clap messages are correctly
+being rerouted., f 46;
+#X obj 1167 222 cnv 15 300 180 empty empty empty 20 12 0 14 -262144
+-66577 0;
+#X text 1196 241 Subpatches to reroute OSC messages;
+#X obj 1233 290 osc_from_Processing_to_Pi;
+#X obj 1233 341 osc_from_Pi_to_Processing;
+#X obj 1211 105 cnv 15 200 24 empty empty Motors_diagnostics 20 12
+0 14 -262130 -66577 0;
+#X obj 304 102 cnv 15 340 300 empty empty empty 20 12 0 14 -204800
+-66577 0;
+#X obj 316 143 r channel_left_status;
+#X obj 479 144 r channel_right_status;
+#X obj 316 186 vsl 15 128 1 -1 0 0 empty empty empty 0 -9 0 10 -262130
+-1 -1 0 1;
+#X obj 479 183 vsl 15 128 1 -1 0 0 empty empty empty 0 -9 0 10 -262130
+-1 -1 0 1;
+#X obj 347 105 cnv 15 230 24 empty empty Sound_Channel_Monitoring 20
+12 0 14 -262130 -66577 0;
+#X obj 8 416 cnv 15 1580 350 empty empty empty 20 12 0 14 -33289 -66577
+0;
+#X obj 28 439 cnv 15 1547 300 empty empty empty 20 12 0 14 -261234
+-66577 0;
+#X obj 401 505 tgl 40 0 empty empty empty 17 7 0 10 -262130 -1 -1 0
+1;
+#X obj 401 557 s enable_print;
+#X text 400 587 Toggle on if you want to print;
+#X text 401 602 on the pi's terminal the received;
+#X obj 740 563 s connect_to_pi;
+#X obj 740 509 bng 40 250 50 0 empty empty empty 17 7 0 10 -262130
+-1 -1;
+#X obj 68 558 s all_motors_on_off;
+#X obj 40 448 cnv 15 420 40 empty empty Control_and_Emergency_Management
+20 12 1 20 -258113 -262144 0;
+#X obj 68 508 tgl 40 0 empty empty empty 17 7 0 10 -262130 -1 -1 0
+1;
+#X text 400 618 OSC messages. Control + C on Pi terminal allows to
+quit the data stream, f 37;
+#X text 738 598 Click if the Pi does not receive messages, f 38;
+#X text 67 606 sends 0/1 to all motors to turn them off / on at the
+same time., f 28;
+#X obj 1274 560 s sound_engine_off;
+#X obj 1274 500 bng 40 250 50 0 empty empty empty 17 7 0 10 -258113
+-1 -1;
+#X text 1270 596 turn off sound on the sound engine in the main patch
+in case of emergencies., f 31;
+#X obj 34 66 cnv 15 180 25 empty empty Monitoring 45 12 0 14 -66577
+-262144 0;
+#X text 312 324 Here \, you can monitor how the sound heard by participants
+via headphones variates. This ensures that the sound system is working
+properly and responding to the current mode of the game., f 45;
+#X connect 2 0 15 0;
+#X connect 6 0 7 0;
+#X connect 11 0 8 0;
+#X connect 12 0 9 0;
+#X connect 13 0 10 0;
+#X connect 19 0 20 0;
+#X connect 21 0 22 0;
+#X connect 22 0 25 0;
+#X connect 23 0 24 0;
+#X connect 24 0 21 0;
+#X connect 26 0 21 0;
+#X connect 27 0 21 0;
+#X connect 36 0 38 0;
+#X connect 37 0 39 0;
+#X connect 43 0 44 0;
+#X connect 48 0 47 0;
+#X connect 51 0 49 0;
+#X connect 56 0 55 0;

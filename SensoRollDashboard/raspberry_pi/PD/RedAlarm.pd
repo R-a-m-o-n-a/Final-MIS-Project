@@ -1,0 +1,56 @@
+#N canvas 793 0 798 808 12;
+#X obj 47 60 inlet;
+#X obj 303 450 *~;
+#X obj 230 521 throw~ left;
+#X obj 371 520 throw~ right;
+#X obj 303 345 *;
+#X obj 303 391 phasor~;
+#X obj 511 394 *;
+#X obj 446 285 r volume;
+#X text 448 442 Receives volume: as a wall approaches \, volume increases
+, f 28;
+#X text 210 565 Receives tempo of the alarm to activate the phasor
+(300Hz) on both ears, f 42;
+#X text 46 648 NOTE: We changed the [osc~] to [phasor~] so that users
+will effectively recognize the difference between Red and Orange alarms
+\, especially if Red and Orange walls are presented close to each other
+in time (thanks to the high temporal resolution of auditory system).
+This might be a substitue for the color difference of the walls that
+sighted people can see on the screen., f 76;
+#X msg 565 287 0.6;
+#X obj 327 60 r loopStart4;
+#X floatatom 249 288 5 0 0 0 - - -;
+#X obj 345 226 loadbang;
+#X obj 249 228 r tempo;
+#X floatatom 446 338 5 0 0 0 - - -;
+#X floatatom 565 337 5 0 0 0 - - -;
+#X msg 678 285 0;
+#X obj 678 178 r loopFinished;
+#X obj 45 131 s turnOff1;
+#X obj 140 130 s turnOff2;
+#X obj 235 129 s turnOff3;
+#X obj 706 211 r turnOff4;
+#X text 29 168 When this alarm goes on \, the others go off;
+#X obj 720 243 loadbang;
+#X msg 345 286 880;
+#X connect 1 0 2 0;
+#X connect 1 0 3 0;
+#X connect 4 0 5 0;
+#X connect 5 0 1 0;
+#X connect 6 0 1 1;
+#X connect 7 0 16 0;
+#X connect 11 0 17 0;
+#X connect 12 0 11 0;
+#X connect 12 0 20 0;
+#X connect 12 0 21 0;
+#X connect 12 0 22 0;
+#X connect 13 0 4 0;
+#X connect 14 0 26 0;
+#X connect 15 0 13 0;
+#X connect 16 0 6 0;
+#X connect 17 0 6 1;
+#X connect 18 0 17 0;
+#X connect 19 0 18 0;
+#X connect 23 0 18 0;
+#X connect 25 0 18 0;
+#X connect 26 0 4 1;
