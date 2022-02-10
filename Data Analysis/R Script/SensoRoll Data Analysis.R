@@ -1,6 +1,6 @@
-VDATA <- read.csv("F:\\University of Trento\\Human-Computer Interaction\\3rd Semester\\Multisensory Interactive Systems\\Project\\DataSet\\Modes Separated\\Visual Mode Spliced.csv")
-AHDATA <- read.csv("F:\\University of Trento\\Human-Computer Interaction\\3rd Semester\\Multisensory Interactive Systems\\Project\\DataSet\\Modes Separated\\AudioHaptics Mode Spliced.csv")
-QDATA <- read.csv("F:\\University of Trento\\Human-Computer Interaction\\3rd Semester\\Multisensory Interactive Systems\\Project\\DataSet\\Questionnaire\\MIS Questionnaire Spliced.csv")
+VDATA <- read.csv("F:\\University of Trento\\Human-Computer Interaction\\3rd Semester\\Multisensory Interactive Systems\\Project\\Data Set\\Results of Game Modes\\Visual Mode Spliced.csv")
+AHDATA <- read.csv("F:\\University of Trento\\Human-Computer Interaction\\3rd Semester\\Multisensory Interactive Systems\\Project\\Data Set\\Results of Game Modes\\AudioHaptics Mode Spliced.csv")
+QDATA <- read.csv("F:\\University of Trento\\Human-Computer Interaction\\3rd Semester\\Multisensory Interactive Systems\\Project\\Data Set\\Results of Questionnaire\\MIS Questionnaire Spliced.csv")
 
 
 head(VDATA)
@@ -10,6 +10,15 @@ head(QDATA)
 summary(VDATA)
 summary(AHDATA)
 summary(QDATA)
+
+summary(VDATA[,2])
+summary(VDATA[,6])
+summary(VDATA[,10])
+
+summary(AHDATA[,2])
+summary(AHDATA[,6])
+summary(AHDATA[,10])
+
 
 
 
@@ -65,10 +74,13 @@ table(Age)
 barplot(table(Age),xlab="Age Ranges of Participants",ylab="Frequency",col="coral")
 
 
+GamingExpSummary <- summary(QDATA$GamingExp)
 GamingExpMean <- mean(QDATA$GamingExp)
 GamingExpSd <- sd(QDATA$GamingExp)
+GamingExpSummary
 GamingExpMean
 GamingExpSd
+
 
 
 
@@ -111,6 +123,25 @@ cor(AHDATA$totalGameTime2, QDATA[,10:14])
 # For the Audio/Haptics mode, there is a Medium correlation (in negative direction) between Performance and Subjective data about each game task perceived difficulty.
 # This means that when the design of the game elements did have a Medium impact (not negligible) on the performance of the Participants playing in the Audio/Haptics mode.
 # In other words, when each of game tasks is accomplished with greater difficulty (lower score), the participants show lower performace (more time to complete the track).
+
+
+
+
+
+# Computing Inferential statistics for Subjective data (Answers to questions about the system)
+
+
+t.test((QDATA[,5]),(QDATA[,10]), paired=TRUE)
+t.test((QDATA[,6]),(QDATA[,11]), paired=TRUE)
+t.test((QDATA[,7]),(QDATA[,12]), paired=TRUE)
+t.test((QDATA[,8]),(QDATA[,13]), paired=TRUE)
+t.test((QDATA[,9]),(QDATA[,14]), paired=TRUE)
+
+
+
+
+# Performing Correlation test between Performance and Subjective data (Answers to questions about the system) in Auditory/Haptics mode
+
 
 cor.test(AHDATA$totalGameTime2, QDATA[,10])
 cor.test(AHDATA$totalGameTime2, QDATA[,11])
