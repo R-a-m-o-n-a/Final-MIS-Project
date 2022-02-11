@@ -41,7 +41,7 @@
 #X obj 604 39 r sound_engine_off;
 #X text 752 39 message coming from the dashboard on the laptop to turn
 off the sound engine in case of emergencies;
-#X text 185 13 When the game is started \, the sound engine starts
+#X text 179 -6 When the game is started \, the sound engine starts
 playing. When the game is stopped \, sound engine stops. Both actions
 are due to receiving OSC messages r startGame (1) and r startGame (0).
 visualMode also sends 0 and 1 and \, depending on the mode \, it deactivates/activates

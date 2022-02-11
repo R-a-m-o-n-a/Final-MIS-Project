@@ -1,32 +1,35 @@
-#N canvas 7 16 798 808 12;
-#X obj 49 76 inlet;
-#X obj 219 546 throw~ left;
-#X obj 355 545 throw~ right;
-#X obj 298 473 *~ 1;
-#X obj 298 412 osc~;
-#X obj 506 408 *;
-#X obj 460 306 r volume;
-#X msg 567 308 1;
-#X text 170 588 Receives tempo of the alarm to activate the oscillator
+#N canvas 291 22 814 808 12;
+#X obj 50 93 inlet;
+#X obj 220 563 throw~ left;
+#X obj 356 562 throw~ right;
+#X obj 299 490 *~ 1;
+#X obj 299 429 osc~;
+#X obj 507 425 *;
+#X obj 461 323 r volume;
+#X msg 568 325 1;
+#X text 171 605 Receives tempo of the alarm to activate the oscillator
 (400Hz) on both ears, f 42;
-#X text 434 466 Receives volume: as a wall approaches \, volume increases
+#X text 435 483 Receives volume: as a wall approaches \, volume increases
 , f 28;
-#X obj 298 362 *;
-#X floatatom 257 307 5 0 0 0 - - -;
-#X obj 340 252 loadbang;
-#X obj 312 74 r loopStart2;
-#X obj 257 252 r tempo;
-#X floatatom 460 358 5 0 0 0 - - -;
-#X floatatom 567 362 5 0 0 0 - - -;
-#X msg 663 308 0;
-#X obj 663 201 r loopFinished;
-#X obj 45 144 s turnOff1;
-#X obj 140 143 s turnOff3;
-#X obj 235 142 s turnOff4;
-#X obj 689 232 r turnOff2;
-#X text 35 176 When this alarm goes on \, the others go off;
-#X obj 702 265 loadbang;
-#X msg 340 306 440;
+#X obj 299 379 *;
+#X floatatom 258 324 5 0 0 0 - - -;
+#X obj 341 269 loadbang;
+#X obj 313 91 r loopStart2;
+#X obj 258 269 r tempo;
+#X floatatom 461 375 5 0 0 0 - - -;
+#X floatatom 568 379 5 0 0 0 - - -;
+#X msg 664 325 0;
+#X obj 664 218 r loopFinished;
+#X obj 46 161 s turnOff1;
+#X obj 141 160 s turnOff3;
+#X obj 236 159 s turnOff4;
+#X obj 690 249 r turnOff2;
+#X text 36 193 When this alarm goes on \, the others go off;
+#X obj 703 282 loadbang;
+#X msg 341 323 440;
+#X obj 258 24 cnv 15 200 30 empty empty empty 20 12 0 14 -262130 -66577
+0;
+#X text 295 31 Yellow Alarm (YA);
 #X connect 3 0 1 0;
 #X connect 3 0 2 0;
 #X connect 4 0 3 0;

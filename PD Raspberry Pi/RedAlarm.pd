@@ -1,38 +1,41 @@
 #N canvas 793 0 798 808 12;
-#X obj 47 60 inlet;
-#X obj 303 450 *~;
-#X obj 230 521 throw~ left;
-#X obj 371 520 throw~ right;
-#X obj 303 345 *;
-#X obj 303 391 phasor~;
-#X obj 511 394 *;
-#X obj 446 285 r volume;
-#X text 448 442 Receives volume: as a wall approaches \, volume increases
+#X obj 47 90 inlet;
+#X obj 303 480 *~;
+#X obj 230 551 throw~ left;
+#X obj 371 550 throw~ right;
+#X obj 303 375 *;
+#X obj 303 421 phasor~;
+#X obj 511 424 *;
+#X obj 446 315 r volume;
+#X text 448 472 Receives volume: as a wall approaches \, volume increases
 , f 28;
-#X text 210 565 Receives tempo of the alarm to activate the phasor
+#X text 210 595 Receives tempo of the alarm to activate the phasor
 (300Hz) on both ears, f 42;
-#X text 46 648 NOTE: We changed the [osc~] to [phasor~] so that users
+#X text 46 678 NOTE: We changed the [osc~] to [phasor~] so that users
 will effectively recognize the difference between Red and Orange alarms
 \, especially if Red and Orange walls are presented close to each other
 in time (thanks to the high temporal resolution of auditory system).
 This might be a substitue for the color difference of the walls that
 sighted people can see on the screen., f 76;
-#X msg 565 287 0.6;
-#X obj 327 60 r loopStart4;
-#X floatatom 249 288 5 0 0 0 - - -;
-#X obj 345 226 loadbang;
-#X obj 249 228 r tempo;
-#X floatatom 446 338 5 0 0 0 - - -;
-#X floatatom 565 337 5 0 0 0 - - -;
-#X msg 678 285 0;
-#X obj 678 178 r loopFinished;
-#X obj 45 131 s turnOff1;
-#X obj 140 130 s turnOff2;
-#X obj 235 129 s turnOff3;
-#X obj 706 211 r turnOff4;
-#X text 29 168 When this alarm goes on \, the others go off;
-#X obj 720 243 loadbang;
-#X msg 345 286 880;
+#X msg 565 317 0.6;
+#X obj 327 90 r loopStart4;
+#X floatatom 249 318 5 0 0 0 - - -;
+#X obj 345 256 loadbang;
+#X obj 249 258 r tempo;
+#X floatatom 446 368 5 0 0 0 - - -;
+#X floatatom 565 367 5 0 0 0 - - -;
+#X msg 678 315 0;
+#X obj 678 208 r loopFinished;
+#X obj 45 161 s turnOff1;
+#X obj 140 160 s turnOff2;
+#X obj 235 159 s turnOff3;
+#X obj 706 241 r turnOff4;
+#X text 29 198 When this alarm goes on \, the others go off;
+#X obj 720 273 loadbang;
+#X msg 345 316 880;
+#X obj 274 25 cnv 15 180 30 empty empty empty 20 12 0 14 -261234 -66577
+0;
+#X text 313 30 Red Alarm (RA);
 #X connect 1 0 2 0;
 #X connect 1 0 3 0;
 #X connect 4 0 5 0;
